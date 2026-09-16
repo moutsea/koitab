@@ -161,7 +161,11 @@
     ],
     "tipTitle": "给整理留一点余地",
     "tip": "执行前先看预览。关闭重复页不会合并页面里的未提交内容；有正在编辑的页面时，先保存工作。",
-    "workflow": ["诊断", "标签页", "收藏夹"],
+    "workflow": [
+      "诊断",
+      "标签页",
+      "收藏夹"
+    ],
     "screenshots": {
       "note": "示例数据 · 点击图片查看原图",
       "diagnosis": "诊断页：查看重复、闲置标签与整理预览",
@@ -268,6 +272,13 @@
   },
   "releases": [
     {
+      "version": "5.3.5",
+      "title": "GitHub Release 下载",
+      "notes": [
+        "README 新增最新版插件 ZIP 直达链接，GitHub Release 提供打包好的扩展与安装说明。"
+      ]
+    },
+    {
       "version": "5.3.4",
       "title": "顶部导航推荐站点",
       "notes": [
@@ -277,7 +288,9 @@
     {
       "version": "5.3.3",
       "title": "页脚新增 ai in ide",
-      "notes": ["「我们还做了」新增 ai in ide 链接与五语简介。"]
+      "notes": [
+        "「我们还做了」新增 ai in ide 链接与五语简介。"
+      ]
     },
     {
       "version": "5.3.2",

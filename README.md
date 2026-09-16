@@ -2,7 +2,9 @@
 
 让纷繁的标签页，归于有序。KoiTab 是一款水墨风的 **Chrome / Edge 标签页整理插件**。
 
-[官网](https://koitab.com/zh) · [下载插件](https://koitab.com/zh/download) · [使用指南](https://koitab.com/zh/guide)
+**[⬇ 下载最新版插件（ZIP）](https://github.com/moutsea/koitab/releases/latest/download/koitab-latest.zip)**
+
+[官网](https://koitab.com/zh) · [所有版本](https://github.com/moutsea/koitab/releases) · [使用指南](https://koitab.com/zh/guide)
 
 ## 能做什么
 
@@ -25,9 +27,11 @@
 
 支持 **Chrome 121+ / Edge 121+**，目前通过 ZIP 安装：
 
-1. [下载并解压](https://koitab.com/zh/download)，保留解压后的 `koitab` 文件夹。
+1. [下载打包好的插件](https://github.com/moutsea/koitab/releases/latest/download/koitab-latest.zip)并解压，保留 `koitab` 文件夹，无需下载整个源码仓库。
 2. 打开 `chrome://extensions` 或 `edge://extensions`，开启**开发者模式**。
 3. 点击**加载已解压的扩展程序**，选择该文件夹，再将 KoiTab 固定到工具栏。
+
+也可从[官网备用下载](https://koitab.com/downloads/koitab-latest.zip)。
 
 更新时替换原目录内的文件，然后在扩展管理页点击刷新。不要先卸载，以免丢失本地收藏。
 

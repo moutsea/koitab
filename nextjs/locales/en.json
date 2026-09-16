@@ -161,7 +161,11 @@
     ],
     "tipTitle": "Leave a little room for care",
     "tip": "Review the preview first. Closing duplicates does not merge unsaved page content; save your work in any page you are editing.",
-    "workflow": ["Diagnosis", "Tabs", "Collections"],
+    "workflow": [
+      "Diagnosis",
+      "Tabs",
+      "Collections"
+    ],
     "screenshots": {
       "note": "Sample data · Select an image to view it at full size",
       "diagnosis": "Diagnosis: duplicates, idle tabs and an organization preview",
@@ -267,6 +271,13 @@
     ]
   },
   "releases": [
+    {
+      "version": "5.3.5",
+      "title": "Download from GitHub Releases",
+      "notes": [
+        "The README now links directly to the latest extension ZIP, with packaged downloads and installation instructions on GitHub Releases."
+      ]
+    },
     {
       "version": "5.3.4",
       "title": "Discover our other products",

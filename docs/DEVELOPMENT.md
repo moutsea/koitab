@@ -52,10 +52,24 @@ Worker 构建依次运行扩展测试、生成下载包与版本记录、构建�
 2. 更新根目录 `CHANGELOG.md`，并补齐五语官网 `releases` 的最新条目。
 3. 运行 `npm run build:worker`，确认验证通过，提交生成的下载包与版本数据。
 4. 推送到 GitHub `main`，Cloudflare Workers Builds 自动部署。
+5. 发布 GitHub Release，附上同一次构建的 `koitab-latest.zip` 并标记为 Latest，README 的固定链接即指向该版本。
 
 Cloudflare 构建根目录为 `nextjs`，构建命令 `npm run build:worker`，部署命令 `npm run deploy:worker`，Node 版本见 `nextjs/.node-version`。
 
 `tools/build-site.py` 从 CHANGELOG 生成 `nextjs/app/releases.json`，打包扩展并附带 MIT 许可证，排除开发诊断页。`wrangler.jsonc` 配置 `koitab.com` 和 `www.koitab.com`；部署自己的副本时需替换 Worker 名称与域名。
+
+### GitHub Release 下载包
+
+在仓库根目录、已提交并推送的发布提交上执行。先把该版本的功能和安装说明写入 `release-notes.md`（临时文件，不提交）。
+
+```bash
+release_version=$(python3 -c 'import json; print(json.load(open("extension/manifest.json"))["version"])')
+gh release create "v${release_version}" nextjs/public/downloads/koitab-latest.zip \
+  --repo moutsea/koitab --target "$(git rev-parse HEAD)" \
+  --title "KoiTab v${release_version}" --notes-file release-notes.md --latest
+```
+
+资产名称固定为 `koitab-latest.zip`，确保 `/releases/latest/download/koitab-latest.zip` 持续可用。GitHub 自动附带的 Source code 是源码，不是插件安装包。官网自动部署不会代替这一步；发布后从 Release 下载 ZIP，检查 manifest 版本与发布标签一致。
 
 ## 图标
 

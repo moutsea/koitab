@@ -161,7 +161,11 @@
     ],
     "tipTitle": "Ante ordinationem paulisper considera",
     "tip": "Praevisionem primum lege. Clausura duplicatorum textum nondum servatum non coniungit. Opus quod in pagina conficis antea serva.",
-    "workflow": ["Diagnosis", "Tabulae", "Collectio"],
+    "workflow": [
+      "Diagnosis",
+      "Tabulae",
+      "Collectio"
+    ],
     "screenshots": {
       "note": "Data ad exemplum · Imaginem elige ut plena magnitudine videas",
       "diagnosis": "Diagnosis: duplicata, tabulae otiosae et praevisio ordinationis",
@@ -267,6 +271,13 @@
     ]
   },
   "releases": [
+    {
+      "version": "5.3.5",
+      "title": "Ex GitHub Release deprome",
+      "notes": [
+        "README nexum directum ad fasciculum ZIP recentissimum praebet; fasciculus extensionis et institutionis praecepta in GitHub Release sunt."
+      ]
+    },
     {
       "version": "5.3.4",
       "title": "Alia opera nostra reperi",
