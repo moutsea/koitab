@@ -29,7 +29,11 @@
     "demo": "中文界面示意 · 插件支持五种语言",
     "next": "继续阅读",
     "notFound": "这一页，还未落笔。",
-    "notFoundBody": "页面不存在，或已移至别处。请从目录继续浏览。"
+    "notFoundBody": "页面不存在，或已移至别处。请从目录继续浏览。",
+    "alsoBuilt": "我们还做了",
+    "koinoteDescription": "AI 时代的 markdown 编辑器",
+    "koiagentDescription": "web 端 agent 助手",
+    "kimiseekDescription": "开源模型折扣渠道"
   },
   "meta": {
     "home": {
@@ -156,11 +160,7 @@
     ],
     "tipTitle": "给整理留一点余地",
     "tip": "执行前先看预览。关闭重复页不会合并页面里的未提交内容；有正在编辑的页面时，先保存工作。",
-    "workflow": [
-      "诊断",
-      "标签页",
-      "收藏夹"
-    ]
+    "workflow": ["诊断", "标签页", "收藏夹"]
   },
   "download": {
     "eyebrow": "获取篇",
@@ -260,6 +260,15 @@
     ]
   },
   "releases": [
+    {
+      "version": "5.3.1",
+      "title": "官网细节与项目开源",
+      "notes": [
+        "语言菜单支持点击外部、移走焦点或按 Escape 关闭。",
+        "去除红色文字印章和页脚订阅按钮，新增五语「我们还做了」产品栏目。",
+        "项目以 MIT 许可证开源，顶部导航提供 GitHub 链接。"
+      ]
+    },
     {
       "version": "5.3.0",
       "title": "插件五语支持",

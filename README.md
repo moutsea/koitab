@@ -22,7 +22,7 @@
 ```
 koitab/
 ├── extension/          # 浏览器插件(Manifest V3,免构建)
-│   ├── manifest.json   # 版本号在这里(当前 5.3.0)
+│   ├── manifest.json   # 版本号在这里(当前 5.3.1)
 │   ├── popup.html / popup.css / popup.js
 │   ├── i18n.js / locales/  # 五语界面与本地语言偏好
 │   ├── _locales/       # Chrome 原生扩展名称与描述翻译
@@ -405,4 +405,4 @@ python3 tools/build-site.py --with-build
 
 ## License
 
-MIT
+本项目以 [MIT](LICENSE) 许可证开源。源码：[moutsea/koitab](https://github.com/moutsea/koitab)。

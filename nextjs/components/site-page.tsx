@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LanguagePicker } from "./language-picker";
 import {
   dictionaries,
   href,
@@ -62,9 +63,16 @@ function Header({
                 {d.nav[key]}
               </Link>
             ))}
+            <a
+              href="https://github.com/moutsea/koitab"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub <Arrow />
+            </a>
           </nav>
           <div className="header-actions">
-            <details className="language-picker">
+            <LanguagePicker key={`${locale}/${section}`}>
               <summary aria-label={d.common.language}>
                 <span aria-hidden="true">文 / A</span>
                 <span className="selected-language">
@@ -88,7 +96,7 @@ function Header({
                   </a>
                 ))}
               </nav>
-            </details>
+            </LanguagePicker>
             <Link
               className="button small header-download"
               href={href(locale, "download")}
@@ -121,6 +129,13 @@ function Header({
                     {d.nav[s || "home"]}
                   </Link>
                 ))}
+                <a
+                  href="https://github.com/moutsea/koitab"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  GitHub <Arrow />
+                </a>
               </nav>
             </details>
           </div>
@@ -133,13 +148,13 @@ function Footer({ locale, d }: { locale: Locale; d: Dictionary }) {
   return (
     <footer className="site-footer wrap">
       <div className="footer-top">
-        <div>
+        <div className="footer-brand">
           <Link href={href(locale)}>
             <Logo />
           </Link>
           <p>{d.common.footer}</p>
         </div>
-        <nav aria-label={d.common.directory}>
+        <nav className="footer-directory" aria-label={d.common.directory}>
           {(
             [
               "features",
@@ -155,18 +170,46 @@ function Footer({ locale, d }: { locale: Locale; d: Dictionary }) {
             </Link>
           ))}
         </nav>
+        <section
+          className="footer-projects"
+          aria-labelledby="footer-projects-heading"
+        >
+          <h2 id="footer-projects-heading">{d.common.alsoBuilt}</h2>
+          <ul>
+            {[
+              {
+                name: "koinote",
+                url: "https://koinote.app",
+                description: d.common.koinoteDescription,
+              },
+              {
+                name: "KoiAgent",
+                url: "https://koiagent.app",
+                description: d.common.koiagentDescription,
+              },
+              {
+                name: "kimiseek",
+                url: "https://kimiseek.app",
+                description: d.common.kimiseekDescription,
+              },
+            ].map((project) => (
+              <li key={project.url}>
+                <a href={project.url} target="_blank" rel="noopener noreferrer">
+                  <span>
+                    {project.name}
+                    <Arrow />
+                  </span>
+                  <small>{project.description}</small>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
       </div>
       <div className="footer-bottom">
         <span>
           © {new Date().getFullYear()} KoiTab{" "}
           <span className="footer-divider">/</span> {d.common.free}
-        </span>
-        <a href={`/${locale}/feed.xml`}>
-          {d.common.rss}
-          <Arrow />
-        </a>
-        <span className="footer-seal" lang="zh-CN" aria-hidden="true">
-          有序
         </span>
       </div>
     </footer>
@@ -234,11 +277,6 @@ function Popup({ caption }: { caption: string }) {
             <strong>一键整理</strong>
           </div>
         </div>
-        <span className="art-seal" lang="zh-CN">
-          井井
-          <br />
-          有条
-        </span>
         <div className="art-baseline" />
       </div>
       <figcaption>{caption}</figcaption>
@@ -328,9 +366,6 @@ function Home({ locale, d }: { locale: Locale; d: Dictionary }) {
         </div>
       </section>
       <section className="closing wrap">
-        <span className="seal-outline" lang="zh-CN" aria-hidden="true">
-          静
-        </span>
         <h2>{d.home.closing}</h2>
         <p>{d.home.closingBody}</p>
         <Link className="button" href={href(locale, "download")}>
@@ -429,9 +464,6 @@ function Guide({ locale, d }: { locale: Locale; d: Dictionary }) {
   return (
     <div className="reading-layout wrap">
       <aside className="margin-note">
-        <span className="seal-outline" lang="zh-CN" aria-hidden="true">
-          阅
-        </span>
         <h2>{d.common.menu}</h2>
         <nav>
           {d.guide.items.map((s, i) => (

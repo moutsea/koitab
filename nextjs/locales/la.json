@@ -29,7 +29,11 @@
     "demo": "Exemplum Sinice · Quinque linguae praesto sunt",
     "next": "Lege etiam",
     "notFound": "Haec pagina nondum scripta est.",
-    "notFoundBody": "Pagina non exstat aut alio translata est. Per indicem redire potes."
+    "notFoundBody": "Pagina non exstat aut alio translata est. Per indicem redire potes.",
+    "alsoBuilt": "Haec quoque fecimus",
+    "koinoteDescription": "Editor Markdown aetatis intelligentiae artificialis",
+    "koiagentDescription": "Adiutor agentium intelligentium in interrete",
+    "kimiseekDescription": "Aditus ad exemplaria aperta pretio minore"
   },
   "meta": {
     "home": {
@@ -156,11 +160,7 @@
     ],
     "tipTitle": "Ante ordinationem paulisper considera",
     "tip": "Praevisionem primum lege. Clausura duplicatorum textum nondum servatum non coniungit. Opus quod in pagina conficis antea serva.",
-    "workflow": [
-      "Diagnosis",
-      "Tabulae",
-      "Collectio"
-    ]
+    "workflow": ["Diagnosis", "Tabulae", "Collectio"]
   },
   "download": {
     "eyebrow": "DE INSTITUTIONE",
@@ -260,6 +260,15 @@
     ]
   },
   "releases": [
+    {
+      "version": "5.3.1",
+      "title": "Situs emendatus et codex apertus",
+      "notes": [
+        "Index linguarum clauditur si extra eum premas, focum moveas aut clavem Escape adhibeas.",
+        "Sigilla rubra et nexus subscriptionis in pede remoti sunt; alia opera nostra quinque linguis exhibentur.",
+        "Codex sub licentia MIT publicatus est; nexus GitHub in navigatione additus est."
+      ]
+    },
     {
       "version": "5.3.0",
       "title": "Quinque linguae in extensione",

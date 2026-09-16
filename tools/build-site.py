@@ -104,6 +104,8 @@ def make_zip(version: str):
             full = os.path.join(base, n)
             files.append((full, os.path.join("koitab", os.path.relpath(full, ext_dir))))
 
+    files.append((os.path.join(ROOT, "LICENSE"), "koitab/LICENSE"))
+
     for name in (f"koitab-v{version}.zip", "koitab-latest.zip"):
         path = os.path.join(PUBLIC_DOWNLOADS, name)
         with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as z:
