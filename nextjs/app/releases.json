@@ -1,5 +1,15 @@
 [
   {
+    "version": "5.1.2",
+    "summary": "官网上线与自动发布。",
+    "headline": "官网上线与自动发布",
+    "notes": [
+      "官网部署到 Cloudflare Workers,支持 koitab.com 与 www.koitab.com",
+      "GitHub main 分支更新后自动构建和部署;发布前运行扩展回归测试,同步更新日志与下载包",
+      "固定构建 Node.js 版本,提供统一的 Worker 构建与部署命令"
+    ]
+  },
+  {
     "version": "5.1.1",
     "summary": "修复标签与收藏的数据安全问题,统一浏览器兼容要求与官网资源生成。",
     "headline": "修复标签与收藏的数据安全问题",

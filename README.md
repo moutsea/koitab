@@ -22,7 +22,7 @@
 ```
 koitab/
 ├── extension/          # 浏览器插件(Manifest V3,免构建)
-│   ├── manifest.json   # 版本号在这里(当前 5.1.1)
+│   ├── manifest.json   # 版本号在这里(当前 5.1.2)
 │   ├── popup.html / popup.css / popup.js
 │   ├── debug.html / debug.js  # 诊断页(开发用,只读):验证 lastAccessed 是否跨重启保留
 │   └── icons/          # 插件图标(宣纸底圆角 + 手绘黑墨,由 logo 原图生成)
@@ -118,21 +118,31 @@ python3 tools/build-site.py --with-build # 再顺带跑一次 next build
 ([@opennextjs/cloudflare](https://opennext.js.org/cloudflare))把 Next.js 打成一个 Worker,
 静态资源通过 Workers 的 assets 绑定返回。
 
-### 每次发布
+### 自动发布（GitHub main）
 
-```bash
-python3 tools/build-site.py     # 1. 仓库根:同步 CHANGELOG → releases.json,重打扩展 zip
-cd nextjs && npm run deploy     # 2. opennextjs-cloudflare build + deploy 到 Workers
-# 3. 访问 https://koitab.com 验证
-```
+私有仓库: https://github.com/moutsea/koitab 。Cloudflare Workers Builds 连接该仓库,
+每次推送到 `main` 后自动安装依赖、运行扩展回归测试、生成更新日志和下载包,
+然后构建并部署官网。
 
-首次授权(只需一次):
+Cloudflare 构建设置:
+
+- 生产分支: `main`
+- 根目录: `nextjs`
+- 构建命令: `npm run build:worker`
+- 部署命令: `npm run deploy:worker`
+- Node.js: `22.22.0`（`nextjs/.node-version`）
+
+发布时更新 `extension/manifest.json` 和 `CHANGELOG.md`,运行
+`python3 tools/build-site.py` 后提交并推送。构建状态在
+Cloudflare **Workers & Pages → koitab → Deployments** 查看。
+
+### 手动部署
 
 ```bash
 cd nextjs
-npm ci                 # 装依赖
-npx wrangler login     # 浏览器里授权 Cloudflare 账号
-npm run deploy
+npm ci
+npx wrangler login      # 首次授权
+npm run deploy         # 回归测试 + 生成下载包 + 构建 + 部署
 ```
 
 ### 绑定 koitab.com
