@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LanguagePicker } from "./language-picker";
+import { DismissibleMenu } from "./dismissible-menu";
 import {
   dictionaries,
   href,
@@ -34,6 +34,44 @@ function Logo() {
     </span>
   );
 }
+function ProjectLinks({ d }: { d: Dictionary }) {
+  return (
+    <ul>
+      {[
+        {
+          name: "koinote",
+          url: "https://koinote.app",
+          description: d.common.koinoteDescription,
+        },
+        {
+          name: "KoiAgent",
+          url: "https://koiagent.app",
+          description: d.common.koiagentDescription,
+        },
+        {
+          name: "kimiseek",
+          url: "https://kimiseek.app",
+          description: d.common.kimiseekDescription,
+        },
+        {
+          name: "ai in ide",
+          url: "https://aiinide.com",
+          description: d.common.aiinideDescription,
+        },
+      ].map((project) => (
+        <li key={project.url}>
+          <a href={project.url} target="_blank" rel="noopener noreferrer">
+            <span>
+              {project.name}
+              <Arrow />
+            </span>
+            <small>{project.description}</small>
+          </a>
+        </li>
+      ))}
+    </ul>
+  );
+}
 function Header({
   locale,
   section,
@@ -64,6 +102,20 @@ function Header({
                 {d.nav[key]}
               </Link>
             ))}
+            <DismissibleMenu
+              className="projects-picker"
+              key={`projects/${locale}/${section}`}
+            >
+              <summary>
+                {d.common.alsoBuilt}
+                <span className="chevron" aria-hidden="true">
+                  ⌄
+                </span>
+              </summary>
+              <div className="projects-menu">
+                <ProjectLinks d={d} />
+              </div>
+            </DismissibleMenu>
             <a
               href="https://github.com/moutsea/koitab"
               target="_blank"
@@ -73,7 +125,10 @@ function Header({
             </a>
           </nav>
           <div className="header-actions">
-            <LanguagePicker key={`${locale}/${section}`}>
+            <DismissibleMenu
+              className="language-picker"
+              key={`${locale}/${section}`}
+            >
               <summary aria-label={d.common.language}>
                 <span aria-hidden="true">文 / A</span>
                 <span className="selected-language">
@@ -97,7 +152,7 @@ function Header({
                   </a>
                 ))}
               </nav>
-            </LanguagePicker>
+            </DismissibleMenu>
             <Link
               className="button small header-download"
               href={href(locale, "download")}
@@ -105,7 +160,10 @@ function Header({
               {d.nav.download}
               <Arrow down />
             </Link>
-            <details key={section} className="mobile-menu">
+            <DismissibleMenu
+              key={`${locale}/${section}/mobile`}
+              className="mobile-menu"
+            >
               <summary>
                 {d.common.menu}
                 <span aria-hidden="true">＋</span>
@@ -137,8 +195,15 @@ function Header({
                 >
                   GitHub <Arrow />
                 </a>
+                <section
+                  className="mobile-projects"
+                  aria-labelledby="mobile-projects-heading"
+                >
+                  <h2 id="mobile-projects-heading">{d.common.alsoBuilt}</h2>
+                  <ProjectLinks d={d} />
+                </section>
               </nav>
-            </details>
+            </DismissibleMenu>
           </div>
         </div>
       </header>
@@ -176,40 +241,7 @@ function Footer({ locale, d }: { locale: Locale; d: Dictionary }) {
           aria-labelledby="footer-projects-heading"
         >
           <h2 id="footer-projects-heading">{d.common.alsoBuilt}</h2>
-          <ul>
-            {[
-              {
-                name: "koinote",
-                url: "https://koinote.app",
-                description: d.common.koinoteDescription,
-              },
-              {
-                name: "KoiAgent",
-                url: "https://koiagent.app",
-                description: d.common.koiagentDescription,
-              },
-              {
-                name: "kimiseek",
-                url: "https://kimiseek.app",
-                description: d.common.kimiseekDescription,
-              },
-              {
-                name: "ai in ide",
-                url: "https://aiinide.com",
-                description: d.common.aiinideDescription,
-              },
-            ].map((project) => (
-              <li key={project.url}>
-                <a href={project.url} target="_blank" rel="noopener noreferrer">
-                  <span>
-                    {project.name}
-                    <Arrow />
-                  </span>
-                  <small>{project.description}</small>
-                </a>
-              </li>
-            ))}
-          </ul>
+          <ProjectLinks d={d} />
         </section>
       </div>
       <div className="footer-bottom">

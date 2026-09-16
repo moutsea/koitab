@@ -2,7 +2,13 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 
-export function LanguagePicker({ children }: { children: ReactNode }) {
+export function DismissibleMenu({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className: string;
+}) {
   const ref = useRef<HTMLDetailsElement>(null);
 
   useEffect(() => {
@@ -34,7 +40,7 @@ export function LanguagePicker({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <details ref={ref} className="language-picker">
+    <details ref={ref} className={className}>
       {children}
     </details>
   );

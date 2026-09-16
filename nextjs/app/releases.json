@@ -1,5 +1,15 @@
 [
   {
+    "version": "5.3.4",
+    "summary": "顶部导航推荐站点。",
+    "headline": "顶部导航推荐站点",
+    "notes": [
+      "顶部新增「我们还做了」下拉菜单，提供 koinote、KoiAgent、kimiseek、ai in ide 的链接与五语简介",
+      "手机菜单同步加入四个站点；菜单支持点击外部、移走焦点或按 Escape 关闭",
+      "顶部与页脚复用同一份产品链接，保持内容一致"
+    ]
+  },
+  {
     "version": "5.3.3",
     "summary": "页脚新增 ai in ide。",
     "headline": "页脚新增 ai in ide",

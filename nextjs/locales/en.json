@@ -161,11 +161,7 @@
     ],
     "tipTitle": "Leave a little room for care",
     "tip": "Review the preview first. Closing duplicates does not merge unsaved page content; save your work in any page you are editing.",
-    "workflow": [
-      "Diagnosis",
-      "Tabs",
-      "Collections"
-    ],
+    "workflow": ["Diagnosis", "Tabs", "Collections"],
     "screenshots": {
       "note": "Sample data · Select an image to view it at full size",
       "diagnosis": "Diagnosis: duplicates, idle tabs and an organization preview",
@@ -271,6 +267,13 @@
     ]
   },
   "releases": [
+    {
+      "version": "5.3.4",
+      "title": "Discover our other products",
+      "notes": [
+        "Added a header dropdown and mobile navigation section for our four other products, with descriptions and dismissal by clicking outside or pressing Escape."
+      ]
+    },
     {
       "version": "5.3.3",
       "title": "ai in ide joins the footer",
