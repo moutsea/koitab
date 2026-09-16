@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KoiTab — 浏览器标签页整理助手</title>
+  <meta name="description" content="KoiTab 是一款免费开源的浏览器插件:一键关闭重复网页、跨窗口聚合并按站点成组,支持 Chrome 和 Edge。" />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ===== 顶部导航 ===== -->
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a class="nav-logo" href="#top"><img class="nav-logo-img" src="assets/logo.png" alt="KoiTab logo" /><span>KoiTab</span></a>
+      <div class="nav-links">
+        <a href="#features">功能</a>
+        <a href="#how">使用方法</a>
+        <a href="#compat">兼容性</a>
+        <a href="#faq">常见问题</a>
+      </div>
+      <a class="btn btn-small btn-primary" href="#download">获取插件</a>
+    </div>
+  </nav>
+
+  <!-- ===== Hero ===== -->
+  <header class="hero" id="top">
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <span class="hero-badge">免费 · 开源 · 本地运行</span>
+        <h1>让杂乱的标签页,<br /><span class="grad">一键变得井井有条</span></h1>
+        <p class="hero-sub">
+          KoiTab 是一款轻量的浏览器标签页整理助手:点一下「一键整理」,
+          自动关掉重复网页、把相同网站合并成组,多窗口也能一起收拾干净;
+          很久没用的页面还能一键收进 KoiTab 收藏夹再关闭,想找随时能回来。
+        </p>
+        <div class="hero-actions" id="download">
+          <a class="btn btn-primary" href="downloads/koitab-latest.zip" download>⬇️ 下载 KoiTab（Chrome / Edge 通用）</a>
+          <a class="btn btn-ghost" href="#features">了解功能</a>
+        </div>
+        <p class="hero-note">无需注册 · 不上传任何数据 · Manifest V3</p>
+      </div>
+
+      <!-- 弹窗预览 mock -->
+      <div class="hero-mock" aria-hidden="true">
+        <div class="mock-popup">
+          <div class="mock-head">
+            <strong><img class="mock-logo" src="assets/logo.png" alt="" />KoiTab</strong>
+            <span class="mock-search">搜索标签页…</span>
+          </div>
+          <div class="mock-actions">
+            <span class="mock-btn mock-btn-primary">⚡ 一键整理</span>
+          </div>
+          <div class="mock-group">
+            <div class="mock-group-head"><b class="mock-caret">▾</b><i style="--c:#3b82f6"></i>github.com <em>5</em></div>
+            <div class="mock-row">🔧 koitab · feature/tabs</div>
+            <div class="mock-row">🐛 issue #128 · group API</div>
+            <div class="mock-row dim">📦 releases · v1.0.0</div>
+          </div>
+          <div class="mock-group">
+            <div class="mock-group-head"><b class="mock-caret">▾</b><i style="--c:#f59e0b"></i>docs.google.com <em>3</em></div>
+            <div class="mock-row">📄 KoiTab 产品需求文档</div>
+            <div class="mock-row dim">📊 数据看板</div>
+          </div>
+          <div class="mock-group">
+            <div class="mock-group-head"><b class="mock-caret is-collapsed">▾</b><i style="--c:#ec4899"></i>bilibili.com <em>2</em></div>
+            <div class="mock-row mock-preview">🎬 【摸鱼】今日推荐视频<span class="mock-more">等 2 个</span></div>
+          </div>
+          <div class="mock-group">
+            <div class="mock-group-head"><b class="mock-caret is-collapsed">▾</b><i style="--c:#10b981"></i>stackoverflow.com <em>12</em></div>
+            <div class="mock-row mock-preview">❓ Chrome tabGroups API 用法<span class="mock-more">等 12 个</span></div>
+          </div>
+          <div class="mock-stat">28 个标签页 · 3 个站点 · 2 个重复</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== 功能 ===== -->
+  <section class="section" id="features">
+    <div class="container">
+      <h2 class="section-title">核心功能</h2>
+      <p class="section-sub">一个小弹窗,搞定标签栏的全部混乱</p>
+
+      <div class="grid-3">
+        <article class="card">
+          <div class="card-icon">⚡</div>
+          <h3>一键整理</h3>
+          <p>一个按钮搞定全部:关掉重复 → 取消单标签分组 → 所有分组收进当前窗口并成组 → 散标签收进一个新窗口。</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">🧩</div>
+          <h3>合并同类项</h3>
+          <p>按域名自动识别相同网站,把它们收进带颜色的标签分组,标签栏立刻清爽。</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">🧹</div>
+          <h3>关闭重复网页</h3>
+          <p>自动检测内容完全相同的标签页并关闭多余副本,优先保留固定和正在浏览的页面。</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">🧭</div>
+          <h3>三个 tab,各司其职</h3>
+          <p>「诊断」先给你一份标签体检报告 —— 重复多少、散乱多少、几天没用的多少,整理/归档的效果动手前就能预览到;「标签页」是分组列表;「收藏夹」分两区:KoiTab 自己的收藏 + 浏览器书签只读展示,搜索一起命中。</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">📚</div>
+          <h3>归档未用标签</h3>
+          <p>3 / 7 / 30 天没用过的标签页,<b>先收进 KoiTab 自己的收藏夹再关闭</b> —— 不碰浏览器书签,更不是丢掉,随时能找回。正在浏览和固定的页面永远不动。</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">🪟</div>
+          <h3>跨窗口整理</h3>
+          <p>支持「本窗口 / 所有窗口」切换,多个窗口一次整理完;同一网站在各窗口使用同一分组颜色,一眼对应。</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">🎯</div>
+          <h3>整理成两个窗口</h3>
+          <p>选「所有窗口」时,结果一目了然:<b>当前窗口集中展示所有站点分组</b>,散标签(站点合计只有 1 个的)统一收进一个新窗口,其余窗口被搬空后关闭。哪怕各窗口里的分组各自都已经很整齐,也会被合并到一处。固定标签留在原窗口。</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">📁</div>
+          <h3>站点分组与折叠</h3>
+          <p>同站点自动成组并配专属颜色;点标题即可折叠,折叠后只剩「站点名 + 数量」,一眼就是一排干净的站点。超过几个自动收起由你在「操作」页配置(默认 8)。</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">🔍</div>
+          <h3>快速搜索定位</h3>
+          <p>在弹窗里直接搜索标题或网址,点击即跳转,再也不用在一排小图标里大海捞针。</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">🚫</div>
+          <h3>整站一键关闭</h3>
+          <p>某个站点的标签页开太多?点一下分组标题右侧的 ×,把这个站点的标签页全部关掉。</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">🔒</div>
+          <h3>隐私优先</h3>
+          <p>所有整理都在本地完成,不收集、不上传任何浏览数据,用得安心。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 使用方法 ===== -->
+  <section class="section section-alt" id="how">
+    <div class="container">
+      <h2 class="section-title">三步开始使用</h2>
+      <p class="section-sub">支持 Chrome 与 Edge,下载即用 —— 无需应用商店</p>
+
+      <div class="steps">
+        <div class="step">
+          <span class="step-num">1</span>
+          <h3>下载并解压</h3>
+          <p>点击顶部的下载按钮获取 <code>koitab-latest.zip</code>,解压到任意目录,得到一个 <code>koitab</code> 文件夹。</p>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <h3>打开扩展管理页</h3>
+          <p>在地址栏输入 <code>chrome://extensions</code>(Edge 为 <code>edge://extensions</code>),打开右上角的「开发者模式」。</p>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <h3>加载已解压的扩展</h3>
+          <p>点击「加载已解压的扩展程序」,选择解压出的 <code>koitab</code> 文件夹,工具栏出现锦鲤图标即安装成功。</p>
+        </div>
+      </div>
+
+      <div class="tip">
+        💡 建议把 KoiTab 图标固定到工具栏:点击浏览器地址栏右侧的拼图图标 🧩,把 KoiTab 钉住,随手就能整理。
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 兼容性 ===== -->
+  <section class="section" id="compat">
+    <div class="container">
+      <h2 class="section-title">浏览器兼容性</h2>
+      <p class="section-sub">基于 Chromium Manifest V3 打造,主流浏览器开箱即用</p>
+      <div class="compat-grid">
+        <div class="compat-card">
+          <span class="compat-logo">🌐</span>
+          <h3>Google Chrome</h3>
+          <p>Chrome 121 及以上版本完整支持</p>
+        </div>
+        <div class="compat-card">
+          <span class="compat-logo">🌊</span>
+          <h3>Microsoft Edge</h3>
+          <p>Edge 121 及以上版本完整支持</p>
+        </div>
+        <div class="compat-card">
+          <span class="compat-logo">🦊</span>
+          <h3>更多浏览器</h3>
+          <p>Brave / Arc 等 Chromium 系浏览器均可尝试</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="section section-alt" id="faq">
+    <div class="container container-narrow">
+      <h2 class="section-title">常见问题</h2>
+
+      <details class="faq-item" open>
+        <summary>KoiTab 会收集我的浏览记录吗?</summary>
+        <p>不会。KoiTab 的全部逻辑都在你的浏览器本地运行,没有服务器,没有任何数据上报。</p>
+      </details>
+      <details class="faq-item">
+        <summary>标签页太多,列表太长滚不完怎么办?</summary>
+        <p>点分组标题即可折叠该站点,<b>折叠后整组收起,只留「站点名 + 数量」</b> —— 不再夹着某一条标签页的信息,全部折叠时扫过去就是一排干净的站点,点标题就能展开。标签数超过 8 个、而你还没手动操作过的站点,打开弹窗时会自动收起;底栏的「全部折叠」能一次收起所有分组。所有折叠状态都会被记住,而且你的手动操作永远优先于自动折叠。</p>
+      </details>
+      <details class="faq-item">
+        <summary>「一键整理」具体做了什么?</summary>
+        <p>按固定顺序依次执行五步:① 关闭重复网页 → ② 取消只剩单个标签的分组 → ③ 所有分组收进当前窗口并成组、散标签收进一个新窗口(仅「所有窗口」范围)→ ④ 收拾剩余标签 → ⑤ 分组靠左重排。顺序是刻意的:先去重能让后续处理更少标签;取消分组要排在集中之前(取消后标签就变回未分组,才能参与集中);集中必须先搬运再成组,因为 Chrome 的分组无法跨窗口。按钮悬停会提示本次将执行哪几步,全都没得做时会置灰。</p>
+      </details>
+      <details class="faq-item">
+        <summary>整理成两个窗口:会不会把我的窗口搞乱?</summary>
+        <p>不会,结果就是清清楚楚的两个窗口:<b>当前窗口集中展示所有站点分组</b>(它只收不搬,绝不会被搬空,弹窗也就不会中断),<b>散标签统一收进一个新窗口</b>。其他窗口若被搬空,Chrome 会关掉空窗口,但<b>标签不会丢</b>,它们都在上面这两个窗口里,提示也会说明关了几个。固定标签(邮箱、日历这类常驻页)一律留在原窗口,也不参与分组(Chrome 不允许固定标签进分组)。散标签已经收在一个窗口里之后不会被反复搬动,所以不会越点窗口越多。</p>
+      </details>
+      <details class="faq-item">
+        <summary>重排会把我的标签分组打乱吗?</summary>
+        <p>不会。重排只移动<b>未分组</b>的标签页,并且一律挪到标签栏末尾 —— 分组内的标签页一个都不动,所以同组内成员的顺序、分组与分组之间的先后顺序都完整保留。固定标签页也不会被移动(Chrome 要求固定标签只能在最左侧)。</p>
+      </details>
+      <details class="faq-item">
+        <summary>「合并同类项」会改变我的标签页内容吗?</summary>
+        <p>不会。合并只是把相同网站的标签页放进同一个浏览器原生分组,页面本身不会被刷新或重载。</p>
+      </details>
+      <details class="faq-item">
+        <summary>「关闭重复网页」保留哪一个?</summary>
+        <p>优先保留已固定(Pinned)的标签页,其次是你当前正在查看的,最后保留最早打开的那个。跨窗口去重时,如果某个窗口只剩这一个标签,它会保留下来,避免整个窗口被关掉。</p>
+      </details>
+      <details class="faq-item">
+        <summary>深色模式下图标看得清吗?</summary>
+        <p>看得清。图标采用白底圆角 + 黑墨笔触的设计,在浅色和深色工具栏上都有稳定对比度,弹窗界面同样会适配深色皮肤。</p>
+      </details>
+      <details class="faq-item">
+        <summary>可以整理其他窗口吗?</summary>
+        <p>可以。弹窗顶部可在「本窗口 / 所有窗口」之间切换,选择会被记住。两组范围都会关闭重复、取消单标签分组、重排;只有「所有窗口」才会额外把所有分组收进当前窗口、把散标签收进一个新窗口。<b>想让标签被跨窗口整理,记得切到「所有窗口」。</b></p>
+      </details>
+      <details class="faq-item">
+        <summary>会把标签页搬到别的窗口吗?</summary>
+        <p>看范围:选「本窗口」时只在原地整理,不搬动任何标签页;选「所有窗口」时,所有站点分组收进<b>当前窗口</b>,散标签收进一个新窗口。当前窗口只收不搬、永远不会被搬空;其他窗口被搬空后关闭,标签不会丢(都在上面两个窗口里)。固定标签保持原位。</p>
+      </details>
+      <details class="faq-item">
+        <summary>「归档未用标签」会不会把我还要用的页关掉?</summary>
+        <p>它的原则是宁可漏、不可误杀:正在浏览的、固定的、时间戳拿不到的一律不动;而且<b>关掉的每一个页都先存进了 KoiTab 自己的收藏夹</b>(本地存储,按站点分组,不碰浏览器书签),没存成功就绝不关闭。就算真收错了,去「收藏夹」页一找就在 —— 这是"归档",不是"清理"。</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ===== CTA / Footer ===== -->
+  <footer class="footer">
+    <div class="container">
+      <h2>现在,给标签栏减个负</h2>
+      <img class="footer-logo" src="assets/logo.png" alt="" aria-hidden="true" />
+      <a class="btn btn-primary btn-large" href="downloads/koitab-latest.zip" download>⬇️ 下载 KoiTab 扩展</a>
+      <p class="footer-note">KoiTab © 2025 · 为效率而生 · Made with ❤️</p>
+    </div>
+  </footer>
+
+</body>
+</html>

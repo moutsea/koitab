@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="popup.css" />
+  <title>KoiTab</title>
+</head>
+<body>
+  <header class="koi-header">
+    <div class="koi-logo">
+      <span class="koi-logo-fish"><img src="icons/icon32.png" alt="" width="20" height="20" /></span>
+      <span class="koi-logo-name">KoiTab</span>
+    </div>
+    <span class="koi-ver" id="ver-chip"></span>
+  </header>
+
+  <nav class="koi-tabs" id="koi-nav" role="tablist">
+    <button class="koi-tab is-active" data-view="ops" role="tab" title="标签体检:先看清,再动手"><span>诊断</span></button>
+    <button class="koi-tab" data-view="tabs" role="tab" title="按站点分组的标签页"><span>标签页</span><i class="koi-tab-badge" id="badge-tabs"></i></button>
+    <button class="koi-tab" data-view="fav" role="tab" title="已归档的标签页"><span>收藏夹</span><i class="koi-tab-badge" id="badge-fav"></i></button>
+  </nav>
+
+  <main class="koi-main">
+
+    <!-- ① 诊断:先体检,再决定整理/归档 -->
+    <section class="koi-panel is-active" id="panel-ops">
+
+      <div class="koi-dx-intro" id="dx-intro">
+        <span class="koi-dx-badge">诊</span>
+        <h2>标签体检</h2>
+        <p class="koi-dx-lead">数一数:多少重复、多少跨窗口、多少长期没用。</p>
+        <p class="koi-dx-sub">看清问题,再决定整不整理、归不归档。</p>
+        <button id="btn-diagnose" class="koi-btn koi-btn-primary koi-btn-wide">开始诊断</button>
+      </div>
+
+      <div class="koi-dx-result is-hidden" id="dx-result">
+
+        <div class="koi-dx-head">
+          <span class="koi-dx-summary" id="dx-summary">—</span>
+          <button id="btn-diagnose-again" class="koi-link-btn" title="重新扫描所有标签页">重新诊断</button>
+        </div>
+
+        <div class="koi-metrics" id="dx-rows"></div>
+
+        <article class="koi-card koi-card-hero">
+          <div class="koi-card-head">
+            <span class="koi-card-icon">整</span>
+            <div class="koi-card-heads">
+              <h2>一键整理</h2>
+              <p id="tidy-preview">—</p>
+            </div>
+          </div>
+          <div class="koi-field">
+            <span class="koi-field-label">整理范围</span>
+            <div class="koi-seg" id="seg-scope">
+              <button class="koi-seg-btn koi-scope-btn is-active" data-scope="window" title="只在当前窗口内整理">本窗口</button>
+              <button class="koi-seg-btn koi-scope-btn" data-scope="all" title="所有分组收进当前窗口,散标签收进一个新窗口">所有窗口</button>
+            </div>
+          </div>
+          <div class="koi-field">
+            <span class="koi-field-label">超过几个自动收起</span>
+            <div class="koi-seg" id="seg-auto">
+              <button class="koi-seg-btn" data-auto="5">5</button>
+              <button class="koi-seg-btn is-active" data-auto="8">8</button>
+              <button class="koi-seg-btn" data-auto="12">12</button>
+              <button class="koi-seg-btn" data-auto="0">从不</button>
+            </div>
+          </div>
+          <button id="btn-tidy" class="koi-btn koi-btn-primary koi-btn-wide" title="按上面的诊断结果整理">按诊断整理</button>
+        </article>
+
+        <article class="koi-card">
+          <div class="koi-card-head">
+            <span class="koi-card-icon">归</span>
+            <div class="koi-card-heads">
+              <h2>归档未用标签</h2>
+              <p id="archive-preview">—</p>
+            </div>
+          </div>
+          <div class="koi-field">
+            <span class="koi-field-label">超过多久没用</span>
+            <div class="koi-seg" id="seg-days">
+              <button class="koi-seg-btn" data-days="3">3 天</button>
+              <button class="koi-seg-btn is-active" data-days="7">7 天</button>
+              <button class="koi-seg-btn" data-days="30">30 天</button>
+            </div>
+          </div>
+          <button id="btn-archive" class="koi-btn koi-btn-wide" title="收进书签再关闭,随时能找回">归档未用标签</button>
+        </article>
+
+      </div>
+
+    </section>
+
+    <!-- ② 标签页:分组列表 -->
+    <section class="koi-panel" id="panel-tabs">
+      <div class="koi-searchbar">
+        <input id="search" type="search" placeholder="搜索标签页…" autocomplete="off" spellcheck="false" />
+      </div>
+      <div id="tab-list" class="koi-list"></div>
+      <footer class="koi-foot">
+        <span id="stat-text">—</span>
+        <button id="btn-toggle-all" class="koi-link-btn" title="折叠所有站点分组">全部折叠</button>
+      </footer>
+    </section>
+
+    <!-- ③ 收藏夹:归档页的找回入口 -->
+    <section class="koi-panel" id="panel-fav">
+      <div class="koi-searchbar">
+        <input id="fav-search" type="search" placeholder="搜索收藏与书签…" autocomplete="off" spellcheck="false" />
+      </div>
+      <div id="fav-list" class="koi-list"></div>
+      <footer class="koi-foot">
+        <span id="fav-stat">—</span>
+        <button id="btn-fav-toggle-all" class="koi-link-btn" title="折叠所有书签文件夹">全部折叠</button>
+        <button id="btn-fav-refresh" class="koi-link-btn" title="重新读取书签">刷新</button>
+      </footer>
+    </section>
+
+  </main>
+
+  <div id="toast" class="koi-toast"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

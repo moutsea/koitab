@@ -1,0 +1,748 @@
+/* ============================================================
+   KoiTab · 中国水墨书签风
+   宣纸底 + 界格细线 + 朱砂印章 + 楷/宋衬线字。
+   零网络字体:楷体/宋体全部走系统自带,离线可用。
+   ============================================================ */
+
+:root {
+  --paper: #f5f0e4;          /* 宣纸 */
+  --paper-deep: #ede6d5;     /* 纸影(页底/凹槽) */
+  --card: #faf6ec;           /* 册页(卡片底,比纸面更白一档) */
+  --ink: #2e2a24;            /* 浓墨 */
+  --ink-2: #5c564c;          /* 淡墨 */
+  --ink-3: #93897a;          /* 灰墨 */
+  --line: #d8cdb6;           /* 界格线 */
+  --seal: #a63b2a;           /* 朱砂 */
+  --seal-deep: #8c2f21;      /* 印泥暗部 */
+  --seal-soft: #f0ddd4;      /* 朱砂晕 */
+  --danger: #a63b2a;
+  --radius: 4px;             /* 书卷小方角,不用现代大圆角 */
+  --brush: "Kaiti SC", "STKaiti", KaiTi, "AR PL KaitiM GB", "楷体", serif;
+  --song: "Songti SC", "STSong", SimSun, "Noto Serif SC", "宋体", serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* 砚池夜色 */
+    --paper: #191713;
+    --paper-deep: #13110d;
+    --card: #201d18;
+    --ink: #e3dcc8;
+    --ink-2: #b0a78f;
+    --ink-3: #7d7565;
+    --line: #38332a;
+    --seal: #c4614b;
+    --seal-deep: #a34a36;
+    --seal-soft: #3a2a22;
+    --danger: #c4614b;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { background: var(--paper-deep); }
+
+body {
+  width: 360px;
+  max-height: 580px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font: 13px/1.5 var(--song);
+  color: var(--ink);
+  /* 纸面:两处极淡的墨晕 + 一层帘纹 */
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(420px 150px at 100% -6%, rgba(46, 42, 36, 0.045), transparent 62%),
+    radial-gradient(360px 140px at -8% 108%, rgba(46, 42, 36, 0.04), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(120, 102, 74, 0.022) 0 2px, transparent 2px 4px);
+}
+
+::selection { background: var(--seal-soft); color: var(--ink); }
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(92, 86, 76, 0.3); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(92, 86, 76, 0.5); }
+
+/* ---------- header:题头 ---------- */
+.koi-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 11px 14px 9px;
+  background: transparent;
+}
+
+.koi-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* logo 装裱:像册页里嵌的一开小画 */
+.koi-logo-fish {
+  display: flex;
+  align-items: center;
+  padding: 3px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.koi-logo-fish img { display: block; border-radius: 2px; }
+
+.koi-logo-name {
+  font: 700 17px/1.1 var(--brush);
+  letter-spacing: 2px;
+}
+
+.koi-ver {
+  font: 600 10.5px/1 var(--brush);
+  letter-spacing: 1px;
+  color: var(--ink-3);
+  padding: 3px 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.koi-ver:empty { display: none; }
+
+/* ---------- tab 导航:三枚题签 ---------- */
+.koi-tabs {
+  display: flex;
+  gap: 3px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.koi-tab {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 0 7px;
+  border: none;
+  background: transparent;
+  color: var(--ink-2);
+  font: 700 13px/1.2 var(--brush);
+  letter-spacing: 2px;
+  text-indent: 2px;      /* 平衡 letter-spacing 的右隙 */
+  cursor: pointer;
+  border-radius: var(--radius) var(--radius) 0 0;
+  transition: color 0.15s;
+}
+.koi-tab:hover { color: var(--ink); }
+
+.koi-tab.is-active { color: var(--seal); }
+.koi-tab.is-active::after {
+  content: '';
+  position: absolute;
+  left: 26%;
+  right: 26%;
+  bottom: -1px;
+  height: 2px;
+  background: var(--seal);
+}
+
+.koi-tab-badge {
+  font-style: normal;
+  font-family: var(--brush);
+  font-size: 9.5px;
+  font-weight: 700;
+  line-height: 14px;
+  letter-spacing: 0;
+  text-indent: 0;
+  min-width: 14px;
+  padding: 0 3px;
+  text-align: center;
+  color: var(--ink-3);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+}
+.koi-tab.is-active .koi-tab-badge {
+  color: #f7ead9;
+  background: var(--seal);
+  border-color: var(--seal);
+}
+.koi-tab-badge:empty { display: none; }
+
+/* ---------- 面板骨架 ---------- */
+.koi-main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.koi-panel { display: none; }
+.koi-panel.is-active {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ---------- ① 诊断:引导页 + 体检报告 ---------- */
+.is-hidden { display: none !important; }
+
+.koi-dx-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 42px 26px 30px;
+  gap: 4px;
+}
+.koi-dx-badge {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 26px/1 var(--brush);
+  color: #f7ead9;
+  background: var(--seal);
+  border-radius: 5px;
+  transform: rotate(-3deg);
+  box-shadow: inset 0 0 0 1.5px rgba(247, 234, 217, 0.35), 0 2px 8px rgba(140, 47, 33, 0.3);
+  margin-bottom: 10px;
+}
+.koi-dx-intro h2 {
+  margin: 0;
+  font: 700 17px/1.3 var(--brush);
+  letter-spacing: 3px;
+  text-indent: 3px;
+}
+.koi-dx-lead { margin: 6px 0 0; font-size: 12.5px; color: var(--ink-2); }
+.koi-dx-sub { margin: 2px 0 14px; font-size: 11.5px; color: var(--ink-3); }
+.koi-dx-intro .koi-btn-wide { max-width: 240px; }
+
+.koi-dx-result {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 10px 12px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.koi-dx-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 2px 2px;
+}
+.koi-dx-summary {
+  font: 600 12px/1.4 var(--brush);
+  letter-spacing: 1px;
+  color: var(--ink-2);
+}
+
+/* 指标行:宣纸上一条墨痕/朱痕,长短即占比 */
+.koi-metrics {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 4px 11px;
+  box-shadow: 0 1px 0 rgba(120, 102, 74, 0.08);
+}
+.koi-metric {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 0;
+}
+.koi-metric + .koi-metric { border-top: 1px dashed var(--line); }
+.koi-metric-label {
+  flex-shrink: 0;
+  width: 74px;
+  font: 700 12px/1 var(--brush);
+  letter-spacing: 0.5px;
+  color: var(--ink);
+}
+.koi-metric-bar {
+  flex: 1;
+  height: 5px;
+  background: var(--paper-deep);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.koi-metric-fill {
+  display: block;
+  height: 100%;
+  background: var(--ink-3);
+  border-radius: 3px;
+  transition: width 0.25s;
+}
+.koi-metric-fill.is-warn { background: var(--seal); }
+.koi-metric-num {
+  flex-shrink: 0;
+  min-width: 64px;
+  text-align: right;
+  font: 600 11px/1 var(--brush);
+  color: var(--ink-3);
+}
+.koi-metric-num.has { color: var(--ink); font-weight: 700; }
+
+/* ---------- 册页卡片(诊断报告里的两块) ---------- */
+#panel-ops.is-active {
+  overflow-y: auto;
+  padding: 10px 10px 12px;
+  gap: 8px;
+}
+
+.koi-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 11px 12px;
+  box-shadow: 0 1px 0 rgba(120, 102, 74, 0.08), 0 3px 10px rgba(46, 42, 36, 0.05);
+}
+
+/* 主卡:左侧一道朱砂边,像书签的系绳侧 */
+.koi-card-hero { border-left: 2px solid var(--seal); }
+
+.koi-card-head { display: flex; gap: 9px; align-items: flex-start; }
+
+/* 卡片图标 = 白文小印 */
+.koi-card-icon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 15px/1 var(--brush);
+  color: #f7ead9;
+  background: var(--seal);
+  border-radius: 3px;
+  transform: rotate(-2deg);
+  box-shadow: inset 0 0 0 1px rgba(247, 234, 217, 0.3);
+}
+
+.koi-card-heads { flex: 1; min-width: 0; }
+.koi-card-heads h2 {
+  margin: 0 0 1px;
+  font: 700 14px/1.3 var(--brush);
+  letter-spacing: 1.5px;
+}
+.koi-card-heads p {
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+/* 归档空状态里,"读不到数据 / 还没闲够"不是好消息,
+   用朱色陈述事实,而不是撒一个 🎉 糊弄过去 */
+#archive-preview.is-warn { color: var(--seal); }
+
+.koi-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.koi-field-label {
+  flex-shrink: 0;
+  font: 600 12px/1 var(--brush);
+  letter-spacing: 1px;
+  color: var(--ink-2);
+}
+
+/* 分段控件:墨条,选中一格是「拓片」(黑底纸字) */
+.koi-seg {
+  display: flex;
+  gap: 1px;
+  padding: 2px;
+  background: var(--paper-deep);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.koi-seg-btn {
+  border: none;
+  background: transparent;
+  color: var(--ink-2);
+  font: 700 11.5px/1 var(--brush);
+  letter-spacing: 0.5px;
+  padding: 5px 9px;
+  border-radius: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+.koi-seg-btn:hover { color: var(--ink); }
+.koi-seg-btn.is-active {
+  background: var(--ink);
+  color: var(--paper);
+}
+@media (prefers-color-scheme: dark) {
+  .koi-seg-btn.is-active { background: var(--ink-2); color: var(--paper-deep); }
+}
+
+/* ---------- 按钮 ---------- */
+.koi-btn {
+  border: 1px solid var(--ink-3);
+  background: var(--card);
+  color: var(--ink);
+  border-radius: var(--radius);
+  font: 700 12.5px/1 var(--brush);
+  letter-spacing: 3px;
+  text-indent: 3px;
+  padding: 9px 0;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.05s;
+}
+.koi-btn:hover:not(:disabled) { background: var(--paper-deep); }
+.koi-btn:active:not(:disabled) { transform: scale(0.99); }
+.koi-btn:disabled { opacity: 0.45; cursor: default; }
+
+.koi-btn-wide { display: block; width: 100%; margin-top: 9px; }
+
+/* 主按钮 = 一方大印:印泥红,微凸 */
+.koi-btn-primary {
+  border: none;
+  background: linear-gradient(180deg, var(--seal) 0%, var(--seal-deep) 100%);
+  color: #f7ead9;
+  font-size: 14px;
+  padding: 10px 0;
+  letter-spacing: 6px;
+  text-indent: 6px;
+  box-shadow: inset 0 0 0 1px rgba(247, 234, 217, 0.22), 0 2px 6px rgba(140, 47, 33, 0.3);
+}
+.koi-btn-primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, var(--seal) 0%, var(--seal-deep) 100%);
+  filter: brightness(1.06);
+}
+.koi-btn-primary:disabled { box-shadow: none; }
+
+/* ---------- ②③ 搜索条 ---------- */
+.koi-searchbar { padding: 9px 12px 7px; flex-shrink: 0; }
+
+#search, #fav-search {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--ink);
+  font-family: var(--song);
+  font-size: 12.5px;
+  outline: none;
+}
+#search::placeholder, #fav-search::placeholder { color: var(--ink-3); }
+#search:focus, #fav-search:focus {
+  border-color: var(--seal);
+  box-shadow: 0 0 0 2px var(--seal-soft);
+}
+
+/* ---------- 列表(标签页 / 收藏夹共用) ---------- */
+.koi-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 8px 10px;
+}
+
+.koi-group {
+  margin-bottom: 6px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 2px;
+}
+
+.koi-group + .koi-group .koi-group-head { box-shadow: none; }
+
+.koi-group-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 7px;
+  font: 700 13px/1.3 var(--brush);
+  letter-spacing: 0.5px;
+  color: var(--ink);
+  /* 长分组滚动时标题吸顶,方便知道当前在哪一类 */
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--card);
+  border-radius: 3px;
+}
+
+.koi-group-head.is-clickable { cursor: pointer; }
+.koi-group-head.is-clickable:hover { background: var(--paper-deep); }
+
+.koi-caret {
+  flex-shrink: 0;
+  width: 9px;
+  font-size: 9px;
+  line-height: 1;
+  color: var(--ink-3);
+  transition: transform 0.15s;
+}
+.koi-caret.is-collapsed { transform: rotate(-90deg); }
+
+.koi-group-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 折叠时整组收起,只留下标题栏上的域名与数量 —— 一眼就是一排站点 */
+.koi-group-body {
+  /* 向内缩进,让标签页明显从属于上方站点标题 */
+  padding-left: 12px;
+  padding-bottom: 3px;
+}
+.koi-group-body.is-collapsed { display: none; }
+
+/* 色点 = 一点朱/一点黛的「圈点」:方角菱形,破一破满屏圆点 */
+.koi-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+.koi-group-count {
+  margin-left: auto;
+  font-family: var(--brush);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 15px;
+  min-width: 15px;
+  text-align: center;
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 0 4px;
+}
+
+.koi-close-domain {
+  border: none;
+  background: transparent;
+  color: var(--ink-3);
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 2px;
+  padding: 0 5px;
+  line-height: 1.4;
+  /* 悬停才出现:全部折叠时界面就是一排干净的域名 */
+  visibility: hidden;
+}
+.koi-group-head:hover .koi-close-domain { visibility: visible; }
+.koi-close-domain:hover { color: var(--danger); background: var(--seal-soft); }
+
+/* 收藏夹分组头的「全部打开」:平时收着,悬停分组头才和 × 一起现身 */
+.koi-fav-openall {
+  visibility: hidden;
+  margin-left: 2px;
+  font-family: var(--brush);
+}
+.koi-group-head:hover .koi-fav-openall { visibility: visible; }
+
+.koi-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12.5px;
+}
+.koi-row:hover { background: var(--paper-deep); }
+
+/* 当前页:朱砂晕 + 左侧一枚界尺线 */
+.koi-row.active-tab {
+  background: var(--seal-soft);
+  box-shadow: inset 2px 0 0 var(--seal);
+}
+
+.koi-favicon {
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 9.5px/1 var(--brush);
+  color: #f7ead9;
+  box-shadow: inset 0 0 0 1px rgba(247, 234, 217, 0.3);
+}
+
+.koi-title {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+.koi-row.active-tab .koi-title { font-weight: 600; }
+
+.koi-close {
+  border: none;
+  background: transparent;
+  color: var(--ink-3);
+  font-size: 14px;
+  line-height: 1;
+  border-radius: 2px;
+  padding: 2px 6px;
+  cursor: pointer;
+  visibility: hidden;
+}
+.koi-row:hover .koi-close { visibility: visible; }
+.koi-close:hover { color: var(--danger); background: var(--seal-soft); }
+
+.koi-empty {
+  text-align: center;
+  color: var(--ink-3);
+  font: 400 13px/1.8 var(--brush);
+  letter-spacing: 1px;
+  padding: 48px 24px;
+}
+
+/* ---------- 收藏夹分区:总文件夹 ---------- */
+.koi-section { margin-bottom: 10px; }
+.koi-section:last-child { margin-bottom: 2px; }
+
+.koi-section-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 4px 6px;
+  /* 分区标题下压一道朱线,和下面的文件夹拉开层级 */
+  border-bottom: 1px solid var(--seal);
+  margin-bottom: 6px;
+}
+.koi-section-head.is-clickable { cursor: pointer; }
+.koi-section-head.is-clickable:hover .koi-section-title { color: var(--seal); }
+
+/* 印章式分区标记:归档区是实心朱印,浏览器书签区是白文(阴刻) */
+.koi-section-mark {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 12px/1 var(--brush);
+  border-radius: 3px;
+  transform: rotate(-3deg);
+  color: var(--seal);
+  border: 1.5px solid var(--seal);
+  background: transparent;
+}
+.koi-section-mark-seal {
+  color: #f7ead9;
+  background: var(--seal);
+  box-shadow: inset 0 0 0 1px rgba(247, 234, 217, 0.3);
+}
+
+.koi-section-title {
+  font: 700 13.5px/1 var(--brush);
+  letter-spacing: 1.5px;
+  color: var(--ink);
+  transition: color 0.15s;
+}
+
+.koi-section-count {
+  margin-left: auto;
+  font: 600 10.5px/1 var(--brush);
+  letter-spacing: 0.5px;
+  color: var(--ink-3);
+}
+
+.koi-section-body.is-collapsed { display: none; }
+
+/* ---------- toast:墨牌 ---------- */
+.koi-toast {
+  margin: 0 10px 8px;
+  padding: 8px 11px;
+  border-radius: var(--radius);
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--brush);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-align: center;
+  display: none;
+  border-left: 3px solid var(--seal);
+  box-shadow: 0 3px 10px rgba(46, 42, 36, 0.25);
+}
+.koi-toast.show { display: block; }
+@media (prefers-color-scheme: dark) {
+  .koi-toast {
+    background: var(--card);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--seal);
+  }
+}
+
+/* ---------- 面板页脚 ---------- */
+.koi-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 8px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-3);
+  font: 400 11px/1.4 var(--brush);
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+#stat-text, #fav-stat {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.koi-link-btn {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  padding: 2px 6px;
+  border-radius: 2px;
+  color: var(--seal);
+  font-family: var(--brush);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+.koi-link-btn:hover:not(:disabled) { background: var(--seal-soft); }
+.koi-link-btn:disabled { color: var(--ink-3); opacity: 0.55; cursor: default; }
+
+/* ---------- 窗口徽标(标签页行) ---------- */
+.koi-win-chip {
+  flex-shrink: 0;
+  min-width: 15px;
+  text-align: center;
+  font: 700 9.5px/15px var(--brush);
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 0 3px;
+}
+.koi-win-chip.is-current {
+  color: #f7ead9;
+  background: var(--seal);
+  border-color: var(--seal);
+}
