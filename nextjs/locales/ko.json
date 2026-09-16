@@ -33,7 +33,8 @@
     "alsoBuilt": "이런 서비스도 만들었어요",
     "koinoteDescription": "AI 시대의 Markdown 편집기",
     "koiagentDescription": "웹에서 사용하는 AI 에이전트 도우미",
-    "kimiseekDescription": "오픈소스 모델 할인 이용 채널"
+    "kimiseekDescription": "오픈소스 모델 할인 이용 채널",
+    "aiinideDescription": "Claude / GPT / Gemini 모델 할인 이용 채널"
   },
   "meta": {
     "home": {
@@ -160,7 +161,11 @@
     ],
     "tipTitle": "정리 전에 잠깐 확인하세요",
     "tip": "먼저 미리보기를 살펴보세요. 중복 페이지를 닫아도 저장하지 않은 내용이 합쳐지지는 않습니다. 편집 중인 작업은 먼저 저장하세요.",
-    "workflow": ["진단", "탭", "컬렉션"],
+    "workflow": [
+      "진단",
+      "탭",
+      "컬렉션"
+    ],
     "screenshots": {
       "note": "예시 데이터 · 이미지를 선택하면 원본으로 표시됩니다",
       "diagnosis": "진단: 중복, 미사용 탭과 정리 미리보기",
@@ -266,6 +271,13 @@
     ]
   },
   "releases": [
+    {
+      "version": "5.3.3",
+      "title": "푸터에 ai in ide 추가",
+      "notes": [
+        "관련 서비스에 ai in ide 링크와 5개 언어 소개를 추가했습니다."
+      ]
+    },
     {
       "version": "5.3.2",
       "title": "화면으로 보는 사용 안내",

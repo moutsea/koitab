@@ -33,7 +33,8 @@
     "alsoBuilt": "We also built",
     "koinoteDescription": "A Markdown editor for the AI era",
     "koiagentDescription": "An AI agent assistant for the web",
-    "kimiseekDescription": "Discounted access to open-source models"
+    "kimiseekDescription": "Discounted access to open-source models",
+    "aiinideDescription": "Discounted access to Claude / GPT / Gemini models"
   },
   "meta": {
     "home": {
@@ -160,7 +161,11 @@
     ],
     "tipTitle": "Leave a little room for care",
     "tip": "Review the preview first. Closing duplicates does not merge unsaved page content; save your work in any page you are editing.",
-    "workflow": ["Diagnosis", "Tabs", "Collections"],
+    "workflow": [
+      "Diagnosis",
+      "Tabs",
+      "Collections"
+    ],
     "screenshots": {
       "note": "Sample data · Select an image to view it at full size",
       "diagnosis": "Diagnosis: duplicates, idle tabs and an organization preview",
@@ -266,6 +271,13 @@
     ]
   },
   "releases": [
+    {
+      "version": "5.3.3",
+      "title": "ai in ide joins the footer",
+      "notes": [
+        "Added ai in ide to our other products, with descriptions in all five languages."
+      ]
+    },
     {
       "version": "5.3.2",
       "title": "A clearer illustrated guide",

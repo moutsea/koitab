@@ -1,5 +1,13 @@
 [
   {
+    "version": "5.3.3",
+    "summary": "页脚新增 ai in ide。",
+    "headline": "页脚新增 ai in ide",
+    "notes": [
+      "「我们还做了」新增 ai in ide（https://aiinide.com），提供 Claude / GPT / Gemini 模型折扣渠道的五语简介"
+    ]
+  },
+  {
     "version": "5.3.2",
     "summary": "更直观的图文指南。",
     "headline": "更直观的图文指南",

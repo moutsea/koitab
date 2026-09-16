@@ -193,6 +193,11 @@ function Footer({ locale, d }: { locale: Locale; d: Dictionary }) {
                 url: "https://kimiseek.app",
                 description: d.common.kimiseekDescription,
               },
+              {
+                name: "ai in ide",
+                url: "https://aiinide.com",
+                description: d.common.aiinideDescription,
+              },
             ].map((project) => (
               <li key={project.url}>
                 <a href={project.url} target="_blank" rel="noopener noreferrer">
