@@ -1,0 +1,291 @@
+{
+  "name": "English",
+  "nav": {
+    "home": "Home",
+    "features": "Features",
+    "guide": "Guide",
+    "download": "Get KoiTab",
+    "privacy": "Privacy",
+    "faq": "FAQ",
+    "changelog": "Changelog"
+  },
+  "common": {
+    "skip": "Skip to content",
+    "language": "Choose language",
+    "menu": "Contents",
+    "read": "Read more",
+    "back": "Back to home",
+    "free": "Free to use · Runs locally",
+    "download": "Download KoiTab",
+    "guide": "Read the guide",
+    "more": "Explore all features",
+    "latest": "Current version",
+    "browser": "For Chrome / Edge 121+",
+    "footer": "A little less clutter. A little more space to think.",
+    "directory": "Explore",
+    "rss": "Subscribe via RSS",
+    "original": "Earlier release notes in Chinese",
+    "releaseIntro": "Small improvements for a calmer everyday browser.",
+    "demo": "Interface illustration · The extension UI is currently in Chinese",
+    "next": "Continue reading",
+    "notFound": "This page is still unwritten.",
+    "notFoundBody": "The page does not exist or has moved. Find your way back through the contents."
+  },
+  "meta": {
+    "home": {
+      "title": "KoiTab — A calmer tab organizer for Chrome & Edge",
+      "description": "Bring order to your browser with KoiTab. Group tabs by site, remove exact duplicate URLs and save idle tabs locally, in a Chinese ink-and-paper interface."
+    },
+    "features": {
+      "title": "Tab grouping, duplicate removal & local archives",
+      "description": "Explore how KoiTab groups tabs by site, organizes browser windows, removes exact duplicate URLs and saves idle tabs before closing them."
+    },
+    "guide": {
+      "title": "How to organize and archive browser tabs with KoiTab",
+      "description": "Learn KoiTab step by step: diagnose tab clutter, organize windows, collapse groups and restore saved links from your local collection."
+    },
+    "download": {
+      "title": "Download KoiTab for Chrome & Microsoft Edge",
+      "description": "Get the free KoiTab extension ZIP and install it in Chrome or Edge. Includes unpacked-extension instructions, requirements and update guidance."
+    },
+    "privacy": {
+      "title": "Privacy & permissions: your browsing stays local",
+      "description": "Understand KoiTab's tabs, tabGroups, bookmarks and storage permissions, local archives, read-only bookmarks and website hosting logs."
+    },
+    "faq": {
+      "title": "KoiTab FAQ & troubleshooting",
+      "description": "Answers about installing KoiTab, duplicate tabs, archiving, pinned tabs, browser compatibility, updates and language support."
+    },
+    "changelog": {
+      "title": "KoiTab changelog & release notes",
+      "description": "Follow KoiTab features, data safety fixes and website improvements. Read recent release notes or subscribe to the English RSS feed."
+    }
+  },
+  "home": {
+    "eyebrow": "ROOM FOR WHAT MATTERS",
+    "title": "A little order.",
+    "accent": "A quieter mind.",
+    "intro": "Every open tab holds a thought. Give each one a place. KoiTab gathers related pages and saves the ones you can return to later, leaving room for what matters now.",
+    "note": "No account. No browsing data uploaded.",
+    "chapter": "A small extension. A calmer browser.",
+    "chapterIntro": "Inspired by paper bookmarks and Chinese ink painting. Made for the simple pleasure of putting things in order.",
+    "principles": [
+      {
+        "title": "Gather what belongs",
+        "body": "Group pages from the same site and bring scattered windows together.",
+        "mark": "理"
+      },
+      {
+        "title": "Keep what is distinct",
+        "body": "Remove only exact duplicate URLs. Different routes stay separate.",
+        "mark": "简"
+      },
+      {
+        "title": "Save it for later",
+        "body": "Save idle pages before closing them, so their links are easy to find again.",
+        "mark": "藏"
+      }
+    ],
+    "closing": "Less to sift through.\nMore room to think.",
+    "closingBody": "Let your next browsing session begin with a little breathing room.",
+    "index": "The KoiTab handbook",
+    "indexIntro": "A place for the features, the how-to, and the details that matter."
+  },
+  "features": {
+    "eyebrow": "THE FEATURES",
+    "title": "Everything in its place.\nYour browsing, undisturbed.",
+    "intro": "From a single page to a whole browser. KoiTab gathers everyday organizing tools into one small, paper-inspired popup.",
+    "items": [
+      {
+        "title": "One site, one group",
+        "body": "Gather pages from the same site into native browser tab groups. Collapse groups and keep consistent colors; in all-windows mode, related groups move into the current window.",
+        "detail": "Pinned tabs stay where they are and are not grouped. Common multi-part and private domain suffixes receive special handling; this is not a full public suffix list."
+      },
+      {
+        "title": "Only identical URLs are duplicates",
+        "body": "KoiTab compares the complete URL, including its path, query and hash. Only identical addresses are duplicates, with pinned or active pages preferred when choosing what to keep.",
+        "detail": "For example, /article#notes and /article#comments remain distinct, as do /page and /page/."
+      },
+      {
+        "title": "Save first. Close second.",
+        "body": "Choose tabs unused for 3, 7 or 30 days. KoiTab writes their links to a local collection before closing pages that still meet the conditions.",
+        "detail": "If saving fails, the tabs stay open. Before closing, KoiTab rechecks the URL, window, access time and active state. Changed tabs are left alone."
+      },
+      {
+        "title": "Two windows, two purposes",
+        "body": "In all-windows mode, the current window holds site groups, while ungrouped pages gather in another window. Groups sit on the left, loose tabs on the right.",
+        "detail": "Current-window mode does not move tabs between windows. Pinned tabs stay put, and the current window is never emptied while the popup is running."
+      },
+      {
+        "title": "Fold, search, find",
+        "body": "Groups remember your open or collapsed preference. Automatically collapse groups at 5, 8 or 12 tabs, or search by title and URL to find a page quickly.",
+        "detail": "Search temporarily expands matching groups. Clearing the search restores their previous state."
+      },
+      {
+        "title": "A collection beside your bookmarks",
+        "body": "KoiTab's collection stores archived links. Browser bookmarks are shown read-only and can be searched alongside it. Deleting a saved link does not delete a browser bookmark.",
+        "detail": "Deleting filtered results only affects the collection entries you confirmed. Hidden entries remain untouched."
+      }
+    ]
+  },
+  "guide": {
+    "eyebrow": "THE GUIDE",
+    "title": "See the whole picture.\nThen put it in order.",
+    "intro": "Install KoiTab, then open the koi icon in your toolbar. Three workspaces help you understand the clutter, arrange your pages and revisit saved links.",
+    "items": [
+      {
+        "title": "Start with Diagnosis (诊断)",
+        "body": "Choose the current window or all windows. Review duplicates, scattered pages and idle tabs. Check the organization and archive previews before running either action."
+      },
+      {
+        "title": "Organize with one click (一键整理)",
+        "body": "KoiTab removes duplicate pages, ungroups single-tab groups, gathers related pages and reorders tabs. Wait for it to finish before starting another organizing or deletion action."
+      },
+      {
+        "title": "Browse the Tabs view (标签页)",
+        "body": "Browse by site, collapse headings, or search by title and address. Select an entry to jump to its tab. The close control beside a group closes that site's pages, so use it deliberately."
+      },
+      {
+        "title": "Archive pages you can return to later",
+        "body": "Choose a 3-, 7- or 30-day threshold, then archive. Active and pinned pages are excluded. If nothing qualifies, KoiTab explains why."
+      },
+      {
+        "title": "Return through Collections (收藏夹)",
+        "body": "KoiTab's saved links and browser bookmarks appear in separate sections. Open a saved entry to revisit its URL. An archive is a link, not a webpage snapshot or a copy of unsent form data."
+      }
+    ],
+    "tipTitle": "Leave a little room for care",
+    "tip": "Review the preview first. Closing duplicates does not merge unsaved page content; save your work in any page you are editing.",
+    "workflow": ["Diagnosis", "Tabs", "Collections"]
+  },
+  "download": {
+    "eyebrow": "GET KOITAB",
+    "title": "A small bookmark.\nReady for your browser.",
+    "intro": "Download the full extension for free and run it in your own browser. No account or subscription required.",
+    "package": "One package for Chrome & Edge",
+    "format": "ZIP archive · Manifest V3",
+    "requirements": "Chrome 121+ or Edge 121+. Other Chromium browsers such as Brave and Arc may work; Firefox and Safari are not supported.",
+    "languageNote": "The website is available in five languages. The extension interface is currently in Chinese.",
+    "steps": [
+      {
+        "title": "Download and unzip",
+        "body": "Download koitab-latest.zip and extract the koitab folder. Keep it in a permanent location rather than a temporary downloads folder."
+      },
+      {
+        "title": "Open the extensions page",
+        "body": "Enter chrome://extensions in Chrome, or edge://extensions in Edge. Turn on Developer mode."
+      },
+      {
+        "title": "Load the folder",
+        "body": "Choose Load unpacked and select the koitab folder containing manifest.json. Pin the koi icon to your browser toolbar."
+      }
+    ],
+    "updateTitle": "Already using KoiTab?",
+    "update": "Extract the new package, replace the files in the original extension folder, then reload it on the extensions page. Keep the same directory and extension ID. Do not uninstall first, as that may clear local saved links. Consider backing up your browser profile before updating.",
+    "storeNote": "Currently distributed as a ZIP. No browser store installation link is available yet.",
+    "install": "Installation"
+  },
+  "privacy": {
+    "eyebrow": "PRIVACY & PERMISSIONS",
+    "title": "Your browsing stays\ninside your browser.",
+    "intro": "The extension organizes, diagnoses and saves links locally. It does not send tab content, bookmarks or browsing history to a KoiTab service.",
+    "items": [
+      {
+        "title": "tabs · Read and organize tabs",
+        "body": "Reads titles, URLs and window information for diagnosis, search, deduplication and archiving. Moves or closes tabs in response to your actions."
+      },
+      {
+        "title": "tabGroups · Manage groups",
+        "body": "Creates, updates and collapses native browser tab groups to gather pages from the same site."
+      },
+      {
+        "title": "bookmarks · Display bookmarks read-only",
+        "body": "Reads browser bookmarks for display and search. KoiTab's code does not write or delete browser bookmarks."
+      },
+      {
+        "title": "storage · Save local settings and links",
+        "body": "Uses chrome.storage.local for preferences, settings and archived links. There is no KoiTab cloud sync service."
+      }
+    ],
+    "storageTitle": "What local storage means",
+    "storage": "Saved links belong to the current browser profile. Uninstalling the extension, clearing extension data or losing the profile can make them unrecoverable. Archives contain titles and URLs, not page copies or login sessions.",
+    "websiteTitle": "The website is separate from the extension",
+    "website": "Cloudflare Workers hosts this website. Visiting it requires the hosting provider to process connection details such as your IP address and request information, and runtime logs may be recorded. These are website requests, not browsing data uploaded by the extension. The website includes no advertising or behavioral analytics scripts."
+  },
+  "faq": {
+    "eyebrow": "QUESTIONS & ANSWERS",
+    "title": "A few things\nworth knowing.",
+    "intro": "Installation, organization, saved links and compatibility. The practical details, in one place.",
+    "items": [
+      {
+        "q": "Which browsers are supported?",
+        "a": "Chrome and Edge version 121 or later are supported. Other Chromium browsers may work; Firefox and Safari do not support this extension."
+      },
+      {
+        "q": "Is the extension available in five languages too?",
+        "a": "The five-language support currently applies to this website. The extension UI is still in Chinese, with installation and usage guidance available here in each language."
+      },
+      {
+        "q": "What counts as a duplicate tab?",
+        "a": "The complete URL must match, including the path, query and hash. Different routes remain separate. Page state such as unsent form input is not compared, so save your work before organizing."
+      },
+      {
+        "q": "Does archiving change my browser bookmarks?",
+        "a": "No. Archives use KoiTab's own local collection. Browser bookmarks are displayed read-only. A saved entry is a link, not an offline webpage copy."
+      },
+      {
+        "q": "Why was an old tab not archived?",
+        "a": "Pinned, active or navigating tabs are excluded, as are pages that do not meet the age threshold. Tabs that change while saving are also kept. Diagnosis explains why there are no eligible pages."
+      },
+      {
+        "q": "How do I update without losing saved links?",
+        "a": "Replace files in the original extension directory, then reload from the extensions page. Do not uninstall first: uninstalling may clear the extension's local storage."
+      },
+      {
+        "q": "Can I undo an organization?",
+        "a": "There is no complete one-click undo. Browser history may help reopen closed pages, but window positions, groups and form input are not guaranteed to return. Review the diagnosis preview first."
+      },
+      {
+        "q": "Will my saved links sync across devices?",
+        "a": "No. KoiTab uses the current browser's local storage and has no account or cloud sync service."
+      },
+      {
+        "q": "Why can I not load the extension?",
+        "a": "Enable Developer mode and select the extracted folder that contains manifest.json. Managed browsers may prohibit manually loaded extensions; follow your administrator's settings."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "5.2.0",
+      "title": "Ink, paper and five languages",
+      "notes": [
+        "A new paper, ink and vermilion website inspired by the extension.",
+        "Chinese, English, Japanese, Korean and Latin pages, with separate features, guide, download, privacy and FAQ sections.",
+        "Localized metadata, language alternatives, structured data, sitemap and RSS feeds."
+      ]
+    },
+    {
+      "version": "5.1.2",
+      "title": "The website goes live",
+      "notes": [
+        "Deployed at koitab.com with automatic tests, builds and deployment after GitHub main updates."
+      ]
+    },
+    {
+      "version": "5.1.1",
+      "title": "Safer tab and collection handling",
+      "notes": [
+        "Fixed URL comparisons, collection deletion and pre-close archive checks to protect stored data.",
+        "Standardized Chrome / Edge 121+ support and added data safety regression tests."
+      ]
+    },
+    {
+      "version": "5.1.0",
+      "title": "A website and release feed",
+      "notes": [
+        "Introduced the Next.js website with extension downloads, release notes, RSS and search metadata."
+      ]
+    }
+  ]
+}

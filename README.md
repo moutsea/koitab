@@ -22,12 +22,15 @@
 ```
 koitab/
 ├── extension/          # 浏览器插件(Manifest V3,免构建)
-│   ├── manifest.json   # 版本号在这里(当前 5.1.2)
+│   ├── manifest.json   # 版本号在这里(当前 5.2.0)
 │   ├── popup.html / popup.css / popup.js
 │   ├── debug.html / debug.js  # 诊断页(开发用,只读):验证 lastAccessed 是否跨重启保留
 │   └── icons/          # 插件图标(宣纸底圆角 + 手绘黑墨,由 logo 原图生成)
 ├── nextjs/             # 官网 koitab.com(Next.js App Router,SSG,部署到 Cloudflare Workers)
-│   ├── app/            # layout(SEO 元数据)/ page / changelog / sitemap / robots / feed.xml
+│   ├── app/[lang]/     # 五语静态页面 + 语言布局 + RSS
+│   ├── components/     # 水墨风页面组件
+│   ├── locales/        # zh / en / ja / ko / la 完整文案与近期版本翻译
+│   ├── lib/            # 类型化路由、语言配置、SEO 元数据与结构化数据
 │   ├── public/         # 静态资源 + 扩展下载包(由 tools/build-site.py 产出)
 │   ├── wrangler.jsonc  # Workers 配置(含 koitab.com 自定义域路由)
 │   └── open-next.config.ts
@@ -85,32 +88,46 @@ npm run build        # 生产构建(验证用)
 > 正常 shell 不带;若工具链带了,用 `NODE_ENV=production npm run build`。
 > `tools/build-site.py` 已强制 production。
 
-### SEO 与 RSS 都做了什么
+### 多语言页面与 SEO
 
-| 项 | 位置 | 说明 |
+官网使用与插件一致的宣纸、墨色、朱砂和系统衬线字体。每种语言都有首页、功能、使用指南、下载、隐私、常见问题、更新日志七个独立页面，共 **35 个静态预渲染页面**。
+
+| 语言 | 首页 | 订阅 |
 | --- | --- | --- |
-| 完整静态 HTML | 全部路由 `○ Static` | 内容不依赖 JS 执行,爬虫直接可读 |
-| title / description / canonical | `app/layout.tsx` | 含 `metadataBase`,canonical 用绝对地址 |
-| Open Graph / Twitter Card | `app/layout.tsx` | 分享卡片带 logo 与站点信息 |
-| JSON-LD 结构化数据 | `app/layout.tsx` + `app/page.tsx` | WebSite + SoftwareApplication(免费、带下载地址)+ **FAQPage**(与页面问答同源) |
-| sitemap.xml / robots.txt | `app/sitemap.ts` / `app/robots.ts` | robots 里声明 sitemap 与 Host |
-| RSS 2.0 | `app/feed.xml/route.ts` | `/feed.xml`,内容来自 `CHANGELOG.md`(构建期静态生成) |
-| 更新日志页 | `app/changelog/page.tsx` | `/changelog`,承载全部版本记录,feed 每条指向对应锚点 |
+| 中文 | `/zh` | `/zh/feed.xml` |
+| English | `/en` | `/en/feed.xml` |
+| 日本語 | `/ja` | `/ja/feed.xml` |
+| 한국어 | `/ko` | `/ko/feed.xml` |
+| Latina | `/la` | `/la/feed.xml` |
 
-**关于 RSS 与 SEO**:RSS 是**分发渠道**(给订阅器与聚合器),搜索引擎并不靠它索引页面。
-SEO 的实际来源是上表前五项 —— 可抓取的静态 HTML、规范的元数据、结构化数据与站点地图。
-RSS 在这里的价值是让老用户第一时间收到新版本,顺带让首页多一块随版本更新的内容。
+子页面使用相同后缀，例如 `/en/features`、`/ja/guide`、`/ko/download`、`/la/privacy`。
+语言切换保留当前页面，使用真实链接，不依赖浏览器翻译或客户端文字替换。
+官网支持五语，**扩展界面仍为中文**，下载页已明确说明。
 
-### 内容维护:单一来源
+- `[lang]/layout.tsx` 生成正确的 HTML `lang`，页面正文在构建时完整输出。
+- `lib/site.ts` 为每页生成独立标题、描述、canonical、Open Graph 与 Twitter 元数据。
+- 五种语言互相声明 `hreflang`，包含自身与中文 `x-default`，站点地图涵盖全部 35 页。
+- 首页声明 WebSite，首页及下载页声明 SoftwareApplication，子页面使用 BreadcrumbList；FAQPage 与可见问答同源，不声明虚构评分。
+- `/`、`/changelog`、`/feed.xml` 以 308 永久重定向到中文对应地址。
+- 每种语言有独立 RSS；中文更新日志保留更早的原文记录，其他语言明确链接至中文历史。
+- 字体和图片均在本地，不请求第三方字体、广告或分析脚本；支持键盘焦点、跳过导航、手机菜单与减少动画偏好。
 
-- 页面文案 / 功能卡 / FAQ → `nextjs/app/content.ts`(同时喂给页面与 JSON-LD,不会两处漂移)
-- 版本更新记录 → 仓库根部 `CHANGELOG.md`,由 `tools/build-site.py` 解析成 `nextjs/app/releases.json`
-- 扩展下载包 → 同一个脚本打进 `nextjs/public/downloads/`
+### 内容维护
+
+- 页面文案与近期版本翻译：`nextjs/locales/{zh,en,ja,ko,la}.json`，类型由 `lib/i18n.ts` 约束。
+- 中文完整历史：根目录 `CHANGELOG.md`，由脚本生成 `nextjs/app/releases.json`。
+- 当前版本：`extension/manifest.json`。发布新版本时同步五个语言文件的 `releases` 首条记录。
+- 扩展 ZIP：`tools/build-site.py` 生成到 `nextjs/public/downloads/`。
+- 视觉样式：`nextjs/app/globals.css`；页面结构：`nextjs/components/site-page.tsx`。
 
 ```bash
-python3 tools/build-site.py              # 解析 CHANGELOG + 打包 zip + 自检
-python3 tools/build-site.py --with-build # 再顺带跑一次 next build
+python3 tools/build-site.py --with-build
+python3 tools/check-site.py
 ```
+
+`check-site.py` 检查实际构建产物：35 页的语言标签、唯一标题与描述、canonical、hreflang、
+语言切换、结构化数据、内部链接与锚点、五语 RSS、站点地图和永久重定向。
+这些检查也包含在 Worker 构建命令中，失败会阻止自动发布。
 
 ## 部署(Cloudflare Workers)
 
@@ -122,7 +139,7 @@ python3 tools/build-site.py --with-build # 再顺带跑一次 next build
 
 私有仓库: https://github.com/moutsea/koitab 。Cloudflare Workers Builds 连接该仓库,
 每次推送到 `main` 后自动安装依赖、运行扩展回归测试、生成更新日志和下载包,
-然后构建并部署官网。
+然后构建、检查多语言 SEO 产物并部署官网。
 
 Cloudflare 构建设置:
 
@@ -167,7 +184,7 @@ npm run deploy         # 回归测试 + 生成下载包 + 构建 + 部署
 - 扩展更新后:`manifest.json` 升版本 → `build-site.py`(重打 zip 与 releases.json)→ 部署
 - 发布包刻意**不含** `debug.html`(开发自查工具);用户反馈异常时让其用仓库完整版跑诊断页
 - 旧的 Cloudflare **Pages** 项目(基于已废弃的 `dist/`)可以删掉了 —— 现在走 Workers
-- 上架 Chrome Web Store 后把首页下载按钮换成商店链接即可(改 `nextjs/app/content.ts`),zip 仍可作备用分发
+- 上架 Chrome Web Store 后把首页下载按钮换成商店链接即可(改 `nextjs/components/site-page.tsx` 与五语文案),zip 仍可作备用分发
 
 ## 使用说明
 

@@ -123,7 +123,7 @@ def check(version: str):
         assert not any("debug." in n for n in names), "开发用诊断页不该进发布包"
         inner = json.loads(z.read("koitab/manifest.json").decode())
         assert inner["version"] == version, "zip 内 manifest 版本与仓库不一致"
-    for f in ("app/page.tsx", "app/changelog/page.tsx", "app/feed.xml/route.ts",
+    for f in ("app/[lang]/layout.tsx", "app/[lang]/[[...slug]]/page.tsx", "app/[lang]/feed.xml/route.ts",
               "app/sitemap.ts", "app/robots.ts", "wrangler.jsonc"):
         assert os.path.exists(os.path.join(APP, f)), f"缺少 {f}"
     print(f"  ✅ 自检通过:v{version} · releases.json / zip / 站点文件齐备")

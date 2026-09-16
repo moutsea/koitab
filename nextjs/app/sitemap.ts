@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
-import { site } from "./content";
-
+import { href, locales, sections } from "../lib/i18n";
+import { alternatives, origin } from "../lib/site";
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
-  return [
-    { url: `${site.url}/`, lastModified: now, changeFrequency: "weekly", priority: 1 },
-    { url: `${site.url}/changelog`, lastModified: now, changeFrequency: "weekly", priority: 0.6 },
-  ];
+  return locales.flatMap((locale) =>
+    sections.map((section) => ({
+      url: `${origin}${href(locale, section)}`,
+      alternates: { languages: alternatives(section) },
+    })),
+  );
 }

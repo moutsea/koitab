@@ -1,0 +1,291 @@
+{
+  "name": "Latina",
+  "nav": {
+    "home": "Initium",
+    "features": "Facultates",
+    "guide": "Dux usus",
+    "download": "Deprome",
+    "privacy": "Res privatae",
+    "faq": "Quaestiones",
+    "changelog": "Mutationes"
+  },
+  "common": {
+    "skip": "Ad textum transire",
+    "language": "Linguam elige",
+    "menu": "Index",
+    "read": "Plura lege",
+    "back": "Ad initium redire",
+    "free": "Gratis · In tuo computatro",
+    "download": "KoiTab deprome",
+    "guide": "Ducem usus lege",
+    "more": "Omnes facultates vide",
+    "latest": "Versio praesens",
+    "browser": "Pro Chrome / Edge 121 vel recentiore",
+    "footer": "Minus confusionis. Plus spatii ad cogitandum.",
+    "directory": "Index paginarum",
+    "rss": "Per RSS mutationes sequere",
+    "original": "Notae antiquiores lingua Sinica",
+    "releaseIntro": "Parvae emendationes ad usum navigatorii tranquilliorem.",
+    "demo": "Imago exemplaris · Interfacies extensionis nunc lingua Sinica est",
+    "next": "Lege etiam",
+    "notFound": "Haec pagina nondum scripta est.",
+    "notFoundBody": "Pagina non exstat aut alio translata est. Per indicem redire potes."
+  },
+  "meta": {
+    "home": {
+      "title": "KoiTab — Ordinator tabularum pro Chrome et Edge",
+      "description": "KoiTab tabulas navigatorii per situs ordinat, inscriptiones duplicatas removet et nexus in computatro tuo servat. Extensio gratuita arte Sinica atramenti et chartae ornata."
+    },
+    "features": {
+      "title": "Greges tabularum, duplicata et nexus servati",
+      "description": "Disce quomodo KoiTab tabulas per situs colligat, fenestras ordinet, inscriptiones omnino easdem removeat et nexus ante clausuram servet."
+    },
+    "guide": {
+      "title": "Dux KoiTab: tabulas ordinare et nexus servare",
+      "description": "Gradatim disce statum tabularum inspicere, fenestras ordinare, greges contrahere et nexus in collectione locali servatos rursus aperire."
+    },
+    "download": {
+      "title": "KoiTab pro Chrome et Microsoft Edge deprome",
+      "description": "Extensionem KoiTab gratis in fasciculo ZIP deprome. Hic invenies rationem instituendi, versiones navigatorii necessarias et consilia ad renovationem."
+    },
+    "privacy": {
+      "title": "Res privatae et facultates accessus KoiTab",
+      "description": "De facultatibus tabs, tabGroups, bookmarks et storage, de nexibus localiter servatis, de notis navigatorii et de commentariis huius situs lege."
+    },
+    "faq": {
+      "title": "Quaestiones frequentes de KoiTab",
+      "description": "Responsa de institutione, tabulis duplicatis, nexibus servandis, tabulis fixis, navigatoriis, renovatione et linguis KoiTab."
+    },
+    "changelog": {
+      "title": "Mutationes KoiTab et notae versionum",
+      "description": "Novas facultates, emendationes et mutationes situs KoiTab vide. Notas recentiores Latine lege vel per RSS sequere."
+    }
+  },
+  "home": {
+    "eyebrow": "ORDO TABULARUM · TRANQUILLITAS MENTIS",
+    "title": "Rebus compositis,",
+    "accent": "mens quiescit.",
+    "intro": "Unaquaeque tabula aperta cogitationem continet. KoiTab paginas cognatas colligit et nexus ad quos postea redire velis servat. Sic spatium relinquitur rebus quae nunc tua attentione egent.",
+    "note": "Nulla inscriptio necessaria. Notitiae navigationis non mittuntur.",
+    "chapter": "Parva extensio. Navigatorium tranquillius.",
+    "chapterIntro": "Forma a signaculis librorum et pictura Sinica atramenti sumpta. Ad res cotidianas simpliciter ordinandas.",
+    "principles": [
+      {
+        "title": "Cognata colligere",
+        "body": "Paginas eiusdem situs coniunge et tabulas per fenestras dispersas compone.",
+        "mark": "理"
+      },
+      {
+        "title": "Distincta retinere",
+        "body": "Solae inscriptiones omnino eaedem removentur. Viae diversae manent.",
+        "mark": "简"
+      },
+      {
+        "title": "In posterum servare",
+        "body": "Nexus paginarum otiosarum ante clausuram servantur, ut rursus inveniantur.",
+        "mark": "藏"
+      }
+    ],
+    "closing": "Minus quaerendum.\nPlus cogitandum.",
+    "closingBody": "Proxima navigatio cum paulo maiore spatio incipiat.",
+    "index": "Enchiridion KoiTab",
+    "indexIntro": "Facultates, usus et res cognitu utiles, suis quaeque paginis."
+  },
+  "features": {
+    "eyebrow": "DE FACULTATIBUS",
+    "title": "Cuique paginae\nsuus locus.",
+    "intro": "Ab una pagina ad totum navigatorium. KoiTab instrumenta ordinandi in parva interfacie, chartae simili, colligit.",
+    "items": [
+      {
+        "title": "Unus situs, unus grex",
+        "body": "Paginae eiusdem situs in greges nativos navigatorii colliguntur. Greges contrahi possunt et colores constantes habent. Si omnes fenestrae eliguntur, greges cognati in fenestram praesentem transferuntur.",
+        "detail": "Tabulae fixae suo loco manent nec gregibus adduntur. Communes terminationes dominiorum multiplices et privatae agnoscuntur; index tamen omnium terminationum publicarum non adhibetur."
+      },
+      {
+        "title": "Inscriptiones omnino eaedem",
+        "body": "Tota inscriptio URL comparatur, via, quaestione et fragmento inclusis. Solum inscriptiones omnino eaedem duplicatae habentur. Tabulae fixae aut actu spectatae potius retinentur.",
+        "detail": "Exempli gratia, /article#notes et /article#comments distinguuntur, sicut /page et /page/."
+      },
+      {
+        "title": "Primum servare, deinde claudere",
+        "body": "Elige tabulas per 3, 7 aut 30 dies non adhibitas. KoiTab nexus in collectione locali servat, deinde paginas quae condiciones adhuc implent claudit.",
+        "detail": "Si servare non potest, tabulas non claudit. Ante clausuram inscriptionem, fenestram, tempus accessus et statum activum iterum inspicit. Tabulae mutatae manent."
+      },
+      {
+        "title": "Duae fenestrae, duo munera",
+        "body": "Cum omnes fenestrae ordinantur, fenestra praesens greges situum continet; tabulae sine grege in alteram colliguntur. Greges sinistrorsum, ceterae tabulae dextrorsum ponuntur.",
+        "detail": "Si sola fenestra praesens eligitur, tabulae inter fenestras non moventur. Tabulae fixae manent, et fenestra praesens dum extensio laborat non vacuatur."
+      },
+      {
+        "title": "Contrahere et invenire",
+        "body": "KoiTab meminit utrum gregem apertum an contractum velis. Greges cum 5, 8 aut 12 tabulis sponte contrahi possunt. Per titulum vel inscriptionem quaerere licet.",
+        "detail": "Dum quaeris, greges convenientes aperiuntur. Quaestione deleta, status pristinus restituitur."
+      },
+      {
+        "title": "Collectio et notae distinctae",
+        "body": "Collectio KoiTab nexus servatos continet. Notae navigatorii tantum leguntur et una quaeri possunt. Nexus e collectione deletus notam navigatorii non delet.",
+        "detail": "Cum inventa delentur, solae res a te confirmatae afficiuntur. Res quae quaestioni non congruunt manent."
+      }
+    ]
+  },
+  "guide": {
+    "eyebrow": "DE USU",
+    "title": "Primum inspice.\nDeinde compone.",
+    "intro": "Extensione instituta, iconem carpi in serie instrumentorum aperi. Tria spatia statum ostendunt, tabulas ordinant et nexus servatos reddunt.",
+    "items": [
+      {
+        "title": "A diagnosi (诊断) incipe",
+        "body": "Elige fenestram praesentem aut omnes fenestras. Inspice duplicata, paginas dispersas et tabulas otiosas. Praevisionem ordinationis vel conservationis lege antequam agas."
+      },
+      {
+        "title": "Uno actu ordina (一键整理)",
+        "body": "KoiTab duplicata claudit, greges unius tabulae dissolvit, paginas cognatas colligit et tabulas disponit. Exspecta finem operis ante aliam ordinationem vel deletionem."
+      },
+      {
+        "title": "Tabulas (标签页) perlustra",
+        "body": "Per situs inspice, titulos gregum contrahe aut per titulum et inscriptionem quaere. Re electa ad tabulam transis. Signum clausurae iuxta gregem paginas illius situs claudit; caute utere."
+      },
+      {
+        "title": "Paginas in posterum serva",
+        "body": "Limitem 3, 7 aut 30 dierum elige, deinde nexus serva. Tabulae activae et fixae excluduntur. Si nulla tabula convenit, causa ostenditur."
+      },
+      {
+        "title": "Per collectionem (收藏夹) redi",
+        "body": "Nexus KoiTab et notae navigatorii in partibus distinctis apparent. Nexu aperto ad inscriptionem rursus accedis. Conservatur nexus, non exemplar paginae neque textus formularii nondum missus."
+      }
+    ],
+    "tipTitle": "Ante ordinationem paulisper considera",
+    "tip": "Praevisionem primum lege. Clausura duplicatorum textum nondum servatum non coniungit. Opus quod in pagina conficis antea serva.",
+    "workflow": ["Diagnosis", "Tabulae", "Collectio"]
+  },
+  "download": {
+    "eyebrow": "DE INSTITUTIONE",
+    "title": "Parvum signaculum\npro tuo navigatorio.",
+    "intro": "Totam extensionem gratis deprome et in tuo navigatorio adhibe. Nec ratio usoris nec solutio periodica requiritur.",
+    "package": "Fasciculus communis pro Chrome et Edge",
+    "format": "Fasciculus ZIP · Manifest V3",
+    "requirements": "Chrome 121 aut Edge 121 vel recentior. Alii navigatores Chromium, ut Brave et Arc, tentari possunt. Firefox et Safari non sustinentur.",
+    "languageNote": "Hic situs quinque linguas praebet. Interfacies extensionis nunc lingua Sinica est.",
+    "steps": [
+      {
+        "title": "Deprome et extrahe",
+        "body": "Fasciculum koitab-latest.zip deprome et directorium koitab extrahe. In loco stabili, non in directorio temporario, pone."
+      },
+      {
+        "title": "Paginam extensionum aperi",
+        "body": "In Chrome scribe chrome://extensions; in Edge, edge://extensions. Modum evolutoris (Developer mode) activa."
+      },
+      {
+        "title": "Directorium elige",
+        "body": "Elige Load unpacked, deinde directorium koitab quod manifest.json continet. Iconem carpi in serie instrumentorum fige."
+      }
+    ],
+    "updateTitle": "Versionem antiquiorem iam habes?",
+    "update": "Novum fasciculum extrahe, documenta in directorio pristino substitue, deinde extensionem e pagina administrationis iterum onera. Idem directorium eademque identitas extensionis maneant. Noli prius extensionem amovere: nexus locales deleri possunt. Ante renovationem exemplar subsidii profili navigatorii facere potes.",
+    "storeNote": "Nunc fasciculus ZIP distribuitur. Nexus ad institutionem ex taberna navigatorii nondum praebetur.",
+    "install": "Gradus institutionis"
+  },
+  "privacy": {
+    "eyebrow": "DE REBUS PRIVATIS",
+    "title": "Tua navigatio\nin tuo navigatorio manet.",
+    "intro": "Ordinatio, diagnosis et conservatio nexuum localiter fiunt. Extensio nec res tabularum nec notas nec historiam navigationis ad ministerium KoiTab mittit.",
+    "items": [
+      {
+        "title": "tabs · Tabulas legere et ordinare",
+        "body": "Titulos, inscriptiones et notitias fenestrarum legit ad diagnosin, quaesitionem, duplicata et conservationem. Tabulas secundum actiones tuas movet aut claudit."
+      },
+      {
+        "title": "tabGroups · Greges administrare",
+        "body": "Greges nativos navigatorii creat, mutat et contrahit, ut paginae eiusdem situs colligantur."
+      },
+      {
+        "title": "bookmarks · Notas tantum legere",
+        "body": "Notas navigatorii legit ad ostendendum et quaerendum. Codex KoiTab notas navigatorii nec scribit nec delet."
+      },
+      {
+        "title": "storage · Optiones et nexus servare",
+        "body": "Per chrome.storage.local optiones, statum gregum et nexus servatos retinet. Ministerium KoiTab ad synchronizationem remotam non est."
+      }
+    ],
+    "storageTitle": "Fines conservationis localis",
+    "storage": "Nexus ad praesens profilum navigatorii pertinent. Si extensionem amoves, eius notitias purgas aut profilum perdis, nexus fortasse recuperari non poterunt. Tituli et inscriptiones servantur, non exemplaria paginarum nec sessiones usoris.",
+    "websiteTitle": "Situs et extensio separatim operantur",
+    "website": "Hunc situm Cloudflare Workers praebet. Cum eum visitas, ministerium hospitans inscriptionem IP et notitias petitionis ad connexionem tractat; commentarii operationis servari possunt. Hae sunt petitiones situs, non notitiae navigationis ab extensione missae. Situs nec praeconia nec scripta ad mores usorum investigandos continet."
+  },
+  "faq": {
+    "eyebrow": "QUAESTIONES ET RESPONSA",
+    "title": "Quae scire velis,\nordine explicata.",
+    "intro": "De institutione, ordine, nexibus et navigatoriis. Res ante usum cognitu utiles.",
+    "items": [
+      {
+        "q": "Qui navigatores sustinentur?",
+        "a": "Chrome et Edge a versione 121 sustinentur. Alii navigatores Chromium tentari possunt. Firefox et Safari hanc extensionem non sustinent."
+      },
+      {
+        "q": "Num extensio quoque quinque linguas habet?",
+        "a": "Quinque linguae nunc ad hunc situm pertinent. Interfacies extensionis Sinica manet; rationes instituendi et utendi hic variis linguis leguntur."
+      },
+      {
+        "q": "Quae tabulae duplicatae habentur?",
+        "a": "Tota inscriptio URL, via, quaestione et fragmento inclusis, eadem esse debet. Viae diversae manent. Status paginae, ut textus formularii nondum missus, non comparatur; opus ante ordinationem serva."
+      },
+      {
+        "q": "Num conservatio notas navigatorii mutat?",
+        "a": "Non. Nexus in propria collectione locali KoiTab servantur. Notae navigatorii tantum leguntur. Res servata nexus est, non exemplar paginae sine rete legendum."
+      },
+      {
+        "q": "Cur tabula vetus non conservata est?",
+        "a": "Tabulae fixae, activae, navigantes aut limite dierum recentiores excluduntur. Tabulae inter servandum mutatae quoque manent. Diagnosis causam ostendit."
+      },
+      {
+        "q": "Quomodo renovo sine amissione nexuum?",
+        "a": "Documenta in pristino directorio extensionis substitue, deinde ex pagina extensionum iterum onera. Noli prius amovere: notitiae locales deleri possunt."
+      },
+      {
+        "q": "Possumne totam ordinationem revocare?",
+        "a": "Revocatio integra uno actu nondum est. Per historiam navigatorii paginas clausas fortasse aperire potes, sed loci fenestrarum, greges et textus formulariorum non certo restituuntur. Praevisionem primum lege."
+      },
+      {
+        "q": "Nexusne inter machinas communicantur?",
+        "a": "Non. KoiTab thesauro locali praesentis navigatorii utitur; nec ratio usoris nec ministerium synchronizationis remotum est."
+      },
+      {
+        "q": "Cur extensionem onerare non possum?",
+        "a": "Modum evolutoris activa et directorium extractum cum manifest.json elige. Navigatorium ab administratore rectum extensiones manu additas prohibere potest; regulas eius sequere."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "5.2.0",
+      "title": "Atramentum, charta et quinque linguae",
+      "notes": [
+        "Situs novo habitu chartae, atramenti et cinnabaris cum extensione congruit.",
+        "Paginae Sinicae, Anglicae, Iaponicae, Coreanae et Latinae, cum partibus distinctis pro facultatibus, usu, institutione, rebus privatis et quaestionibus.",
+        "Metadata per linguas, nexus alterni, notitiae structae, index situs et RSS addita sunt."
+      ]
+    },
+    {
+      "version": "5.1.2",
+      "title": "Situs publicatus et renovatio automatica",
+      "notes": [
+        "Situs koitab.com publicatus est. Mutationes rami main in GitHub probationes, aedificationem et publicationem excitant."
+      ]
+    },
+    {
+      "version": "5.1.1",
+      "title": "Notitiae tutius tractatae",
+      "notes": [
+        "Comparatio inscriptionum, deletio collectionis et inspectio ante clausuram emendatae sunt.",
+        "Chrome et Edge 121 vel recentiores requiruntur; probationes tutelae notitiarum additae sunt."
+      ]
+    },
+    {
+      "version": "5.1.0",
+      "title": "Situs et notae versionum",
+      "notes": [
+        "Situs Next.js cum fasciculo extensionis, notis versionum, RSS et metadatis quaesitionis introductus est."
+      ]
+    }
+  ]
+}

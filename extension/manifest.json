@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "KoiTab - 标签页整理助手",
   "short_name": "KoiTab",
-  "version": "5.1.2",
+  "version": "5.2.0",
   "description": "一键整理浏览器标签页:合并同类网站、关闭重复网页,让标签栏井井有条。",
   "permissions": [
     "tabs",

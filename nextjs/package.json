@@ -10,8 +10,9 @@
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "npm run build:worker && npm run deploy:worker",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
-    "build:worker": "node --test ../tests/*.test.cjs && python3 ../tools/build-site.py && NODE_ENV=production opennextjs-cloudflare build",
-    "deploy:worker": "opennextjs-cloudflare deploy"
+    "build:worker": "node --test ../tests/*.test.cjs && python3 ../tools/build-site.py && NODE_ENV=production opennextjs-cloudflare build && python3 ../tools/check-site.py",
+    "deploy:worker": "opennextjs-cloudflare deploy",
+    "check:site": "python3 ../tools/check-site.py"
   },
   "dependencies": {
     "next": "16.3.5",
