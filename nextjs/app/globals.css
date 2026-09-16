@@ -1759,3 +1759,32 @@ summary {
 .footer-projects .arrow {
   font-size: 12px;
 }
+
+.guide-screenshot {
+  margin: 28px 0 0;
+  max-width: 390px;
+}
+.guide-screenshot a {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px #2e2a2409;
+}
+.guide-screenshot img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+.guide-screenshot figcaption {
+  margin-top: 14px;
+  color: var(--muted);
+  font: 12px/1.8 var(--sans);
+}
+.guide-screenshot figcaption small {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+}

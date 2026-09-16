@@ -1,0 +1,72 @@
+{
+  "zh": {
+    "diagnosis": {
+      "width": 360,
+      "height": 580
+    },
+    "tabs": {
+      "width": 360,
+      "height": 478
+    },
+    "collections": {
+      "width": 360,
+      "height": 532
+    }
+  },
+  "en": {
+    "diagnosis": {
+      "width": 390,
+      "height": 580
+    },
+    "tabs": {
+      "width": 390,
+      "height": 478
+    },
+    "collections": {
+      "width": 390,
+      "height": 532
+    }
+  },
+  "ja": {
+    "diagnosis": {
+      "width": 390,
+      "height": 580
+    },
+    "tabs": {
+      "width": 390,
+      "height": 481
+    },
+    "collections": {
+      "width": 390,
+      "height": 540
+    }
+  },
+  "ko": {
+    "diagnosis": {
+      "width": 390,
+      "height": 580
+    },
+    "tabs": {
+      "width": 390,
+      "height": 473
+    },
+    "collections": {
+      "width": 390,
+      "height": 521
+    }
+  },
+  "la": {
+    "diagnosis": {
+      "width": 390,
+      "height": 580
+    },
+    "tabs": {
+      "width": 390,
+      "height": 478
+    },
+    "collections": {
+      "width": 390,
+      "height": 532
+    }
+  }
+}

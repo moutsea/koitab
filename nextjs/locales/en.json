@@ -160,7 +160,13 @@
     ],
     "tipTitle": "Leave a little room for care",
     "tip": "Review the preview first. Closing duplicates does not merge unsaved page content; save your work in any page you are editing.",
-    "workflow": ["Diagnosis", "Tabs", "Collections"]
+    "workflow": ["Diagnosis", "Tabs", "Collections"],
+    "screenshots": {
+      "note": "Sample data · Select an image to view it at full size",
+      "diagnosis": "Diagnosis: duplicates, idle tabs and an organization preview",
+      "tabs": "Tabs: groups by site, search and folding",
+      "collections": "Collections: saved links and read-only browser bookmarks"
+    }
   },
   "download": {
     "eyebrow": "GET KOITAB",
@@ -260,6 +266,14 @@
     ]
   },
   "releases": [
+    {
+      "version": "5.3.2",
+      "title": "A clearer illustrated guide",
+      "notes": [
+        "A shorter README focuses on features, screenshots and installation, with development notes in a separate document.",
+        "The guide now includes diagnosis, tabs and collections screenshots in each of the five languages, using isolated sample data."
+      ]
+    },
     {
       "version": "5.3.1",
       "title": "Website refinements and open source",

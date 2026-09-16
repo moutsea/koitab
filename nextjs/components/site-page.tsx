@@ -11,6 +11,7 @@ import {
 } from "../lib/i18n";
 import { downloadPath, structuredData, version } from "../lib/site";
 import history from "../app/releases.json";
+import screenshotSizes from "../lib/screenshots.json";
 
 function Arrow({ down = false }: { down?: boolean }) {
   return (
@@ -460,6 +461,36 @@ function Features({ d }: { d: Dictionary }) {
     </div>
   );
 }
+function GuideScreenshot({
+  locale,
+  d,
+  name,
+}: {
+  locale: Locale;
+  d: Dictionary;
+  name: "diagnosis" | "tabs" | "collections";
+}) {
+  const src = `/screenshots/${name}-${locale}.webp`;
+  const size = screenshotSizes[locale][name];
+  return (
+    <figure className="guide-screenshot">
+      <a href={src} target="_blank" rel="noopener noreferrer">
+        <img
+          src={src}
+          width={size.width}
+          height={size.height}
+          alt={d.guide.screenshots[name]}
+          loading="lazy"
+          decoding="async"
+        />
+      </a>
+      <figcaption>
+        {d.guide.screenshots[name]}
+        <small>{d.guide.screenshots.note}</small>
+      </figcaption>
+    </figure>
+  );
+}
 function Guide({ locale, d }: { locale: Locale; d: Dictionary }) {
   return (
     <div className="reading-layout wrap">
@@ -495,6 +526,13 @@ function Guide({ locale, d }: { locale: Locale; d: Dictionary }) {
             <span className="small-index">0{i + 1}</span>
             <h2>{s.title}</h2>
             <p>{s.body}</p>
+            {i === 0 && (
+              <GuideScreenshot locale={locale} d={d} name="diagnosis" />
+            )}
+            {i === 2 && <GuideScreenshot locale={locale} d={d} name="tabs" />}
+            {i === 4 && (
+              <GuideScreenshot locale={locale} d={d} name="collections" />
+            )}
           </section>
         ))}
         <aside className="ink-note">

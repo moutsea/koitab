@@ -160,7 +160,13 @@
     ],
     "tipTitle": "Ante ordinationem paulisper considera",
     "tip": "Praevisionem primum lege. Clausura duplicatorum textum nondum servatum non coniungit. Opus quod in pagina conficis antea serva.",
-    "workflow": ["Diagnosis", "Tabulae", "Collectio"]
+    "workflow": ["Diagnosis", "Tabulae", "Collectio"],
+    "screenshots": {
+      "note": "Data ad exemplum · Imaginem elige ut plena magnitudine videas",
+      "diagnosis": "Diagnosis: duplicata, tabulae otiosae et praevisio ordinationis",
+      "tabs": "Tabulae: greges secundum situs, quaestio et contractio",
+      "collections": "Collectio: nexus servati et notae navigatorii tantum legendae"
+    }
   },
   "download": {
     "eyebrow": "DE INSTITUTIONE",
@@ -260,6 +266,14 @@
     ]
   },
   "releases": [
+    {
+      "version": "5.3.2",
+      "title": "Dux imaginibus illustratus",
+      "notes": [
+        "README brevior facultates, imagines et institutionem exhibet; notae ad progressionem in documento separato sunt.",
+        "Dux quinque linguarum imagines diagnosis, tabularum et collectionis unaquaque lingua exhibet, datis ad exemplum adhibitis."
+      ]
+    },
     {
       "version": "5.3.1",
       "title": "Situs emendatus et codex apertus",
