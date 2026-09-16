@@ -67,7 +67,7 @@ async function readArchived() {
   const rows = got[ARCHIVE_STORE_KEY];
   if (rows === undefined) return [];
   if (!Array.isArray(rows) || rows.some((r) => !r || typeof r.url !== 'string')) {
-    throw new Error('收藏数据格式异常,已保留原数据');
+    throw new Error(tr("收藏数据格式异常,已保留原数据"));
   }
   return rows;
 }
@@ -118,6 +118,15 @@ function normalizeDomain(url) {
   } catch {
     return '其他';
   }
+}
+
+// Internal group keys stay stable across locale changes and existing installs.
+function displayDomain(domain) {
+  return ['浏览器页面', '本地文件', '其他'].includes(domain) ? tr(domain) : domain;
+}
+function favoriteLabel(group) {
+  return group.kind === 'koi' ? displayDomain(group.label)
+    : group.defaultLabel ? tr('书签') : group.label;
 }
 
 function faviconLetter(domain) {
@@ -319,10 +328,10 @@ function syncFavToggleAllLabel() {
   if (!btn) return;
   const hasData = favData && favData.length > 0;
   btn.disabled = favQuery.length > 0 || !hasData;
-  btn.textContent = allFavCollapsed() ? '全部展开' : '全部折叠';
-  btn.title = favQuery.length > 0 ? '搜索时自动展开全部'
-    : !hasData ? '还没有收藏可折叠'
-    : (allFavCollapsed() ? '展开所有分组' : '折叠所有分组');
+  btn.textContent = allFavCollapsed() ? tr("全部展开") : tr("全部折叠");
+  btn.title = favQuery.length > 0 ? tr("搜索时自动展开全部")
+    : !hasData ? tr("还没有收藏可折叠")
+    : (allFavCollapsed() ? tr("展开所有分组") : tr("折叠所有分组"));
 }
 
 function toggleAllFavGroups() {
@@ -372,10 +381,10 @@ function syncToggleAllLabel() {
   const collapsed = allGroupsCollapsed();
 
   btn.disabled = query.length > 0;
-  btn.textContent = collapsed ? '全部展开' : '全部折叠';
+  btn.textContent = collapsed ? tr("全部展开") : tr("全部折叠");
   btn.title = query.length > 0
-    ? '搜索时自动展开全部'
-    : (collapsed ? '展开所有站点分组' : '折叠所有站点分组');
+    ? tr("搜索时自动展开全部")
+    : (collapsed ? tr("展开所有站点分组") : tr("折叠所有站点分组"));
 }
 
 function toggleAllGroups() {
@@ -463,8 +472,8 @@ function render() {
     head.className = 'koi-group-head';
     head.setAttribute('aria-expanded', String(!isCollapsed));
     head.title = searching
-      ? '搜索时自动展开分组'
-      : (isCollapsed ? `展开 ${domain}(${tabs.length} 个标签页)` : `折叠 ${domain}`);
+      ? tr("搜索时自动展开分组")
+      : (isCollapsed ? tr("展开 {0}({1} 个标签页)", displayDomain(domain), tabs.length) : tr("折叠 {0}", displayDomain(domain)));
 
     const caret = document.createElement('span');
     caret.className = 'koi-caret' + (isCollapsed ? ' is-collapsed' : '');
@@ -476,7 +485,7 @@ function render() {
 
     const name = document.createElement('span');
     name.className = 'koi-group-name';
-    name.textContent = domain;
+    name.textContent = displayDomain(domain);
 
     const count = document.createElement('span');
     count.className = 'koi-group-count';
@@ -484,13 +493,13 @@ function render() {
 
     const closeAll = document.createElement('button');
     closeAll.className = 'koi-close-domain';
-    closeAll.title = `关闭 ${domain} 的全部标签页`;
+    closeAll.title = tr("关闭 {0} 的全部标签页", displayDomain(domain));
     closeAll.textContent = '×';
     closeAll.addEventListener('click', async (e) => {
       e.stopPropagation();
       await runExclusive(async () => {
         await chrome.tabs.remove(tabs.map((t) => t.id).filter(Boolean));
-        showToast(`已关闭 ${domain} 的 ${tabs.length} 个标签页`);
+        showToast(tr("已关闭 {0} 的 {1} 个标签页", displayDomain(domain), tabs.length));
         await loadTabs();
       });
     });
@@ -514,8 +523,8 @@ function render() {
         caret.classList.toggle('is-collapsed', nowCollapsed);
         head.setAttribute('aria-expanded', String(!nowCollapsed));
         head.title = nowCollapsed
-          ? `展开 ${domain}(${tabs.length} 个标签页)`
-          : `折叠 ${domain}`;
+          ? tr("展开 {0}({1} 个标签页)", displayDomain(domain), tabs.length)
+          : tr("折叠 {0}", displayDomain(domain));
         syncToggleAllLabel();
         saveCollapsed();
       });
@@ -529,29 +538,29 @@ function render() {
     const empty = document.createElement('div');
     empty.className = 'koi-empty';
     empty.textContent = query
-      ? '没有匹配的标签页'
-      : (scope === 'all' ? '没有可整理的标签页' : '当前窗口没有标签页');
+      ? tr("没有匹配的标签页")
+      : (scope === 'all' ? tr("没有可整理的标签页") : tr("当前窗口没有标签页"));
     listEl.appendChild(empty);
   }
 
   const m = computeMetrics();
-  const parts = [`${allTabs.length} 个标签页`];
-  if (scope === 'all') parts.push(`${windowCount} 个窗口`);
-  parts.push(`${groups.length} 个站点`, `${m.dupCount} 个重复`);
+  const parts = [tr("{0} 个标签页", allTabs.length)];
+  if (scope === 'all') parts.push(tr("{0} 个窗口", windowCount));
+  parts.push(tr("{0} 个站点", groups.length), tr("{0} 个重复", m.dupCount));
   document.getElementById('stat-text').textContent = parts.join(' · ');
 
   const tidyBtn = document.getElementById('btn-tidy');
   tidyBtn.disabled = operationBusy || !m.tidySteps.length;
-  tidyBtn.title = operationBusy ? '正在处理,请稍候' : tidyBtn.disabled
-    ? '标签页已经很整齐了'
-    : `依次执行:${m.tidySteps.join(' → ')}`;
+  tidyBtn.title = operationBusy ? tr("正在处理,请稍候") : tidyBtn.disabled
+    ? tr("标签页已经很整齐了")
+    : tr("依次执行:{0}", m.tidySteps.join(' → '));
 
   const archiveBtn = document.getElementById('btn-archive');
   if (archiveBtn) {
     archiveBtn.disabled = operationBusy || m.archivePlan.closeIds.length === 0;
-    archiveBtn.title = operationBusy ? '正在处理,请稍候' : archiveBtn.disabled
-      ? (m.archiveWhy ? m.archiveWhy.text : '没有可归档的标签页')
-      : `把 ${m.archivePlan.closeIds.length} 个 ${archiveDays} 天未用的标签页收进 KoiTab 收藏并关闭(在「收藏夹」页按站点找回)`;
+    archiveBtn.title = operationBusy ? tr("正在处理,请稍候") : archiveBtn.disabled
+      ? (m.archiveWhy ? m.archiveWhy.text : tr("没有可归档的标签页"))
+      : tr("把 {0} 个 {1} 天未用的标签页收进 KoiTab 收藏并关闭(在「收藏夹」页按站点找回)", m.archivePlan.closeIds.length, archiveDays);
   }
   syncArchiveUI();
   syncAutoUI();
@@ -568,7 +577,7 @@ function render() {
   syncToggleAllLabel();
   document.querySelectorAll(
     '#seg-scope button, #seg-days button, #seg-auto button, #koi-nav button, '
-    + '.koi-close, .koi-close-domain, .koi-fav-openall, #btn-fav-refresh',
+    + '.koi-close, .koi-close-domain, .koi-fav-openall, #btn-fav-refresh, #language',
   ).forEach((button) => { button.disabled = operationBusy; });
 }
 
@@ -577,32 +586,32 @@ function renderRow(tab, isActive, showChip) {
   row.className = 'koi-row' + (isActive ? ' active-tab' : '');
   const winLabel = windowChips.get(tab.windowId);
   row.title = `${tab.title || ''}\n${tab.url || ''}` +
-    (showChip ? `\n(${winLabel === '本' ? '本窗口' : `窗口 ${winLabel}`})` : '');
+    (showChip ? `\n(${winLabel === '本' ? tr("本窗口") : tr("窗口 {0}", winLabel)})` : '');
 
   const domain = normalizeDomain(tab.url);
   const fav = document.createElement('span');
   fav.className = 'koi-favicon';
   fav.style.background = domainColor(domain);
-  fav.textContent = faviconLetter(domain);
+  fav.textContent = faviconLetter(displayDomain(domain));
 
   const title = document.createElement('span');
   title.className = 'koi-title';
-  title.textContent = tab.title || tab.url || '(无标题)';
+  title.textContent = tab.title || tab.url || tr("(无标题)");
 
   const nodes = [fav, title];
 
   if (showChip) {
     const chip = document.createElement('span');
     chip.className = 'koi-win-chip' + (winLabel === '本' ? ' is-current' : '');
-    chip.textContent = winLabel;
-    chip.title = winLabel === '本' ? '本窗口' : `窗口 ${winLabel}`;
+    chip.textContent = winLabel === '本' ? tr('本') : winLabel;
+    chip.title = winLabel === '本' ? tr("本窗口") : tr("窗口 {0}", winLabel);
     nodes.push(chip);
   }
 
   const close = document.createElement('button');
   close.className = 'koi-close';
   close.textContent = '×';
-  close.title = '关闭此标签页';
+  close.title = tr("关闭此标签页");
   close.addEventListener('click', async (e) => {
     e.stopPropagation();
     await runExclusive(async () => {
@@ -692,21 +701,21 @@ function planArchive(tabs, now, days) {
 
 /** 归档结果的汇总提示 */
 function buildArchiveSummary(res) {
-  if (res.error && !res.closed) return `归档未完成(原因:${res.error}),没有关闭标签页`;
+  if (res.error && !res.closed) return tr("归档未完成(原因:{0}),没有关闭标签页", res.error);
   const stored = res.archived + (res.skippedDup || 0);
-  const because = res.error ? `(原因:${res.error})` : '';
+  const because = res.error ? tr("(原因:{0})", res.error) : '';
   if (!res.closed && !stored) {
-    return `没存进 KoiTab 收藏${because} —— 出于安全,一个页也没关`;
+    return tr("没存进 KoiTab 收藏{0} —— 出于安全,一个页也没关", because);
   }
   if (!res.closed) {
-    if (res.skippedChanged) return '已存进 KoiTab 收藏;标签状态已变化,保留页面未关闭';
-    return `已存进 KoiTab 收藏,但页没能关掉 —— 再点一次只补关,不会重复存`;
+    if (res.skippedChanged) return tr("已存进 KoiTab 收藏;标签状态已变化,保留页面未关闭");
+    return tr("已存进 KoiTab 收藏,但页没能关掉 —— 再点一次只补关,不会重复存");
   }
-  const parts = [`把 ${res.closed} 个标签页收进 KoiTab 收藏并关闭`];
-  if (res.duplicatesClosed > 0) parts.push('重复 URL 只收一份');
-  if (res.skippedDup > 0) parts.push(`${res.skippedDup} 条早已收藏过,没重复存`);
-  if (res.failed > 0) parts.push(`${res.failed} 个没关掉(页都还在)`);
-  if (res.skippedChanged > 0) parts.push(`${res.skippedChanged} 个状态已变化,保留未关闭`);
+  const parts = [tr("把 {0} 个标签页收进 KoiTab 收藏并关闭", res.closed)];
+  if (res.duplicatesClosed > 0) parts.push(tr("重复 URL 只收一份"));
+  if (res.skippedDup > 0) parts.push(tr("{0} 条早已收藏过,没重复存", res.skippedDup));
+  if (res.failed > 0) parts.push(tr("{0} 个没关掉(页都还在)", res.failed));
+  if (res.skippedChanged > 0) parts.push(tr("{0} 个状态已变化,保留未关闭", res.skippedChanged));
   return parts.join(' · ');
 }
 
@@ -1258,7 +1267,7 @@ async function archiveCore() {
     await chrome.storage.local.set({ [ARCHIVE_STORE_KEY]: stored.concat(added) });
   } catch (err) {
     console.warn('[KoiTab] save favorites failed', err);
-    result.error = (err && (err.message || err.toString())) || '未知错误';
+    result.error = (err && (err.message || err.toString())) || tr("未知错误");
     return result;
   }
   result.archived = added.length;
@@ -1303,13 +1312,13 @@ async function archiveAllLocked() {
   const btn = document.getElementById('btn-archive');
   btn.disabled = true;
   const btnText = btn.textContent;
-  btn.textContent = '归档中…';   // 明确进入执行态,别让人对着静止的按钮猜
+  btn.textContent = tr("归档中…");   // 明确进入执行态,别让人对着静止的按钮猜
   try {
     await loadTabs();
     const plan = planArchive(allTabs, Date.now(), archiveDays);
     if (!plan.closeIds.length) {
       const why = describeArchiveEmpty(plan);
-      showToast(why ? why.text : '没有需要归档的标签页');
+      showToast(why ? why.text : tr("没有需要归档的标签页"));
       return;
     }
     const res = await archiveCore();
@@ -1318,7 +1327,7 @@ async function archiveAllLocked() {
     showToast(buildArchiveSummary(res));
   } catch (err) {
     console.error('[KoiTab] archive failed', err);
-    showToast('归档时出错,请重试');
+    showToast(tr("归档时出错,请重试"));
   } finally {
     btn.textContent = btnText;
     await loadTabs();
@@ -1330,29 +1339,29 @@ async function archiveAllLocked() {
 /** 汇总各步骤的结果,拼成一句提示 */
 function buildTidySummary(dedupe, collected, merged, ungrouped, reordered) {
   const parts = [];
-  if (dedupe.removed) parts.push(`关闭 ${dedupe.removed} 个重复标签页`);
+  if (dedupe.removed) parts.push(tr("关闭 {0} 个重复标签页", dedupe.removed));
   if (collected.moved) {
-    parts.push(`把 ${collected.moved} 个标签页集中到当前窗口,分成 ${collected.domains} 个站点分组`);
+    parts.push(tr("把 {0} 个标签页集中到当前窗口,分成 {1} 个站点分组", collected.moved, collected.domains));
   } else if (collected.domains) {
-    parts.push(`把 ${collected.domains} 个站点就地成组`);
+    parts.push(tr("把 {0} 个站点就地成组", collected.domains));
   }
   if (collected.looseMoved) {
-    parts.push(`把 ${collected.looseMoved} 个散标签收进新窗口`);
+    parts.push(tr("把 {0} 个散标签收进新窗口", collected.looseMoved));
   }
-  if (merged.grouped) parts.push(`${merged.grouped} 个标签页归入 ${merged.windows} 个站点分组`);
+  if (merged.grouped) parts.push(tr("{0} 个标签页归入 {1} 个站点分组", merged.grouped, merged.windows));
   if (ungrouped && ungrouped.groups) {
-    parts.push(`取消 ${ungrouped.groups} 个只剩单个标签的分组`);
+    parts.push(tr("取消 {0} 个只剩单个标签的分组", ungrouped.groups));
   }
   if (reordered && reordered.moved) {
-    parts.push(`把 ${reordered.moved} 个未分组标签页排到分组右侧`);
+    parts.push(tr("把 {0} 个未分组标签页排到分组右侧", reordered.moved));
   }
-  if (!parts.length) return '没有需要整理的标签页 🎉';
+  if (!parts.length) return tr("没有需要整理的标签页 🎉");
 
-  let msg = '已' + parts.join(' · ');
+  let msg = tr("已") + parts.join(' · ');
   const notes = [];
-  if (dedupe.keptForWindow) notes.push(`${dedupe.keptForWindow} 个重复为避免窗口被清空而保留`);
-  if (collected.pinnedKept) notes.push(`${collected.pinnedKept} 个固定标签页留在原窗口`);
-  if (collected.emptiedWindows) notes.push(`${collected.emptiedWindows} 个被搬空的窗口已关闭`);
+  if (dedupe.keptForWindow) notes.push(tr("{0} 个重复为避免窗口被清空而保留", dedupe.keptForWindow));
+  if (collected.pinnedKept) notes.push(tr("{0} 个固定标签页留在原窗口", collected.pinnedKept));
+  if (collected.emptiedWindows) notes.push(tr("{0} 个被搬空的窗口已关闭", collected.emptiedWindows));
   if (notes.length) msg += `(${notes.join(';')})`;
   return msg;
 }
@@ -1412,7 +1421,7 @@ async function tidyAllLocked() {
     showToast(buildTidySummary(dedupe, collected, merged, ungrouped, reordered));
   } catch (err) {
     console.error('[KoiTab] tidy failed', err);
-    showToast('整理时出错,请重试');
+    showToast(tr("整理时出错,请重试"));
   } finally {
     await loadTabs();
   }
@@ -1446,12 +1455,12 @@ function computeMetrics() {
   const archiveWhy = describeArchiveEmpty(archivePlan);
 
   const tidySteps = [];
-  if (dupCount) tidySteps.push(`关闭 ${dupCount} 个重复`);
-  if (collectSites) tidySteps.push(`把 ${collectSites} 个站点集中到当前窗口`);
-  if (looseNeeded) tidySteps.push(`把 ${loosePlan.tabIds.length} 个散标签收进新窗口`);
-  if (groupable) tidySteps.push(`合并 ${groupable} 个站点`);
-  if (loneGroups) tidySteps.push(`取消 ${loneGroups} 个单标签分组`);
-  if (reorderMoved) tidySteps.push(`把 ${reorderMoved} 个散标签排到分组右侧`);
+  if (dupCount) tidySteps.push(tr("关闭 {0} 个重复", dupCount));
+  if (collectSites) tidySteps.push(tr("把 {0} 个站点集中到当前窗口", collectSites));
+  if (looseNeeded) tidySteps.push(tr("把 {0} 个散标签收进新窗口", loosePlan.tabIds.length));
+  if (groupable) tidySteps.push(tr("合并 {0} 个站点", groupable));
+  if (loneGroups) tidySteps.push(tr("取消 {0} 个单标签分组", loneGroups));
+  if (reorderMoved) tidySteps.push(tr("把 {0} 个散标签排到分组右侧", reorderMoved));
 
   return {
     dupCount, collectPlan, collectSites, collectInvolved,
@@ -1480,12 +1489,12 @@ function describeArchiveEmpty(plan) {
   const timed = eligible.filter((t) => typeof t.lastAccessed === 'number');
 
   if (!eligible.length) {
-    return { kind: 'all-active', text: '开着的页都在你眼前,没有可归的' };
+    return { kind: 'all-active', text: tr("开着的页都在你眼前,没有可归的") };
   }
   if (!timed.length) {
     return { kind: 'no-data', text:
-      '读不到任何"上次使用时间" —— 这项需要 Chrome 121+。'
-      + '可能是浏览器版本偏低,或标签是刚恢复的。可在扩展目录打开 debug.html 核对。' };
+      tr("读不到任何\"上次使用时间\" —— 这项需要 Chrome 121+。")
+      + tr("可能是浏览器版本偏低,或标签是刚恢复的。可在扩展目录打开 debug.html 核对。") };
   }
 
   // 最旧的那个也还不够"闲":报告它还差多久,并给一个刚好能命中它的更短档位
@@ -1493,32 +1502,32 @@ function describeArchiveEmpty(plan) {
   const idleDays = Math.max(0, (Date.now() - oldestMs) / DAY_MS);
   const lower = [3, 7, 30].filter((d) => d < archiveDays && Date.now() - d * DAY_MS >= oldestMs);
   const suggest = lower.length ? Math.min(...lower) : null;  // 最小可命中档:至少收得走最旧的那个
-  const idleText = idleDays < 1 / 1440 ? '就在刚刚' : `${fmtIdle(idleDays)}前`;
+  const idleText = idleDays < 1 / 1440 ? tr("就在刚刚") : tr("{0}前", fmtIdle(idleDays));
   return {
     kind: 'not-stale', idleDays, suggest,
-    text: `没有超过 ${archiveDays} 天没用的页 —— 最久的一个 ${idleText}还用过。`
-      + (suggest ? `切到「${suggest} 天」档就能收走它。`
+    text: tr("没有超过 {0} 天没用的页 —— 最久的一个 {1}还用过。", archiveDays, idleText)
+      + (suggest ? tr("切到「{0} 天」档就能收走它。", suggest)
         : idleDays < 3
-          ? '最短的 3 天档也还没到,再晾几天就有。'
-          : '3 天已是最小档 —— 再晾几天就有。'),
+          ? tr("最短的 3 天档也还没到,再晾几天就有。")
+          : tr("3 天已是最小档 —— 再晾几天就有。")),
   };
 }
 
 function fmtIdle(days) {
-  if (days < 1 / 24) return '刚刚';
-  if (days < 1) return `${Math.max(1, Math.round(days * 24))} 小时`;
-  return `${days.toFixed(days < 10 ? 1 : 0)} 天`;
+  if (days < 1 / 24) return tr("刚刚");
+  if (days < 1) return tr("{0} 小时", Math.max(1, Math.round(days * 24)));
+  return tr("{0} 天", days.toFixed(days < 10 ? 1 : 0));
 }
 
 /** 指标行定义:标签、数量、是否"需要处理"(朱条) */
 function metricRows(m) {
   return [
-    { label: '重复网页', n: m.dupCount, hint: '同网址多份', warn: true },
-    { label: '跨窗口同站点', n: m.collectInvolved, hint: `${m.collectSites} 个站点可集中`, warn: true },
-    { label: '未分组散标签', n: m.ungrouped, hint: '构不成组', warn: false },
-    { label: '单标签分组', n: m.loneGroups, hint: '名不副实的空组', warn: true },
-    { label: '位置交错', n: m.reorderMoved, hint: '散标签混在分组左边', warn: false },
-    { label: `${archiveDays} 天没用`, n: m.archivePlan.closeIds.length, hint: '可收进 KoiTab 收藏再关', warn: true },
+    { label: tr("重复网页"), n: m.dupCount, hint: tr("同网址多份"), warn: true },
+    { label: tr("跨窗口同站点"), n: m.collectInvolved, hint: tr("{0} 个站点可集中", m.collectSites), warn: true },
+    { label: tr("未分组散标签"), n: m.ungrouped, hint: tr("构不成组"), warn: false },
+    { label: tr("单标签分组"), n: m.loneGroups, hint: tr("名不副实的空组"), warn: true },
+    { label: tr("位置交错"), n: m.reorderMoved, hint: tr("散标签混在分组左边"), warn: false },
+    { label: tr("{0} 天没用", archiveDays), n: m.archivePlan.closeIds.length, hint: tr("可收进 KoiTab 收藏再关"), warn: true },
   ];
 }
 
@@ -1532,7 +1541,7 @@ function renderDiagnose(m) {
 
   const summary = document.getElementById('dx-summary');
   if (summary) {
-    summary.textContent = `${allTabs.length} 个标签页 · ${windowCount} 个窗口 · ${new Set(allTabs.map((t) => normalizeDomain(t.url))).size} 个站点`;
+    summary.textContent = tr("{0} 个标签页 · {1} 个窗口 · {2} 个站点", allTabs.length, windowCount, new Set(allTabs.map((t) => normalizeDomain(t.url))).size);
   }
 
   const rowsEl = document.getElementById('dx-rows');
@@ -1557,7 +1566,7 @@ function renderDiagnose(m) {
 
       const num = document.createElement('span');
       num.className = 'koi-metric-num' + (row.n > 0 ? ' has' : '');
-      num.textContent = row.n ? `${row.n} 个 · ${pct}%` : '0';
+      num.textContent = row.n ? tr("{0} 个 · {1}%", row.n, pct) : '0';
       num.title = row.hint;
 
       line.append(label, bar, num);
@@ -1568,15 +1577,15 @@ function renderDiagnose(m) {
   const tidyP = document.getElementById('tidy-preview');
   if (tidyP) {
     tidyP.textContent = m.tidySteps.length
-      ? `整理后:${m.newGroups ? `新合并出 ${m.newGroups} 个分组 · ` : ''}${m.tidySteps.join(';')}`
-      : '已经整理好了,这一步可以跳过';
+      ? tr("整理后:{0}{1}", m.newGroups ? tr("新合并出 {0} 个分组 · ", m.newGroups) : '', m.tidySteps.join('; '))
+      : tr("已经整理好了,这一步可以跳过");
   }
   const archP = document.getElementById('archive-preview');
   if (archP) {
     const a = m.archivePlan;
     archP.textContent = a.closeIds.length
-      ? `归档后:${a.uniques.length} 条收进 KoiTab 收藏并关闭 ${a.closeIds.length} 个页 · ${a.domains} 个站点`
-        + (a.duplicatesClosed ? ` · ${a.duplicatesClosed} 个重复 URL 只收一份` : '')
+      ? tr("归档后:{0} 条收进 KoiTab 收藏并关闭 {1} 个页 · {2} 个站点", a.uniques.length, a.closeIds.length, a.domains)
+        + (a.duplicatesClosed ? tr(" · {0} 个重复 URL 只收一份", a.duplicatesClosed) : '')
       : (m.archiveWhy ? m.archiveWhy.text : '——');
     // '没数据' 和 '都没闲够' 不是好消息也不是庆贺,别顶个 🎉;给足排查线索
     archP.classList.toggle('is-warn', !!m.archiveWhy && m.archiveWhy.kind !== 'all-active');
@@ -1588,7 +1597,7 @@ async function runDiagnose() {
   const btn = document.getElementById('btn-diagnose');
   if (btn) {
     btn.disabled = true;
-    btn.textContent = '诊脉中…';
+    btn.textContent = tr("诊脉中…");
   }
   try {
     await loadTabs();   // loadTabs 末尾会 render(),diagnosed 置位后渲染报告
@@ -1597,7 +1606,7 @@ async function runDiagnose() {
   } finally {
     if (btn) {
       btn.disabled = false;
-      btn.textContent = '开始诊断';
+      btn.textContent = tr("开始诊断");
     }
   }
 }
@@ -1607,7 +1616,10 @@ async function runDiagnose() {
 function syncViewUI() {
   ['ops', 'tabs', 'fav'].forEach((v) => {
     const nav = document.querySelector(`.koi-tab[data-view="${v}"]`);
-    if (nav) nav.classList.toggle('is-active', v === view);
+    if (nav) {
+      nav.classList.toggle('is-active', v === view);
+      nav.setAttribute('aria-selected', String(v === view));
+    }
     const panel = document.getElementById('panel-' + v);
     if (panel) panel.classList.toggle('is-active', v === view);
   });
@@ -1675,8 +1687,8 @@ async function loadFavorites(force) {
   } catch (err) {
     console.warn('[KoiTab] load favorites failed', err);
     favData = null;                       // 下次进入还会重试
-    const why = err && err.message ? String(err.message).slice(0, 60) : '未知错误';
-    showToast(`读取收藏失败(${why}),点「刷新」重试`);
+    const why = err && err.message ? String(err.message).slice(0, 60) : tr("未知错误");
+    showToast(tr("读取收藏失败({0}),点「刷新」重试", why));
   } finally {
     favLoading = false;
   }
@@ -1695,6 +1707,7 @@ async function collectBrowserBookmarks() {
       const group = {
         label: childPath.join('/') || node.title || '书签',
         kind: 'browser',
+        defaultLabel: !childPath.join('/') && !node.title,
         items: [],
       };
       groups.set(node.id, group);
@@ -1727,7 +1740,7 @@ function deleteFavorites(ids) {
       await loadFavorites(true);
     } catch (err) {
       console.warn('[KoiTab] delete favorites failed', err);
-      showToast('删除失败,请刷新后重试');
+      showToast(tr("删除失败,请刷新后重试"));
     }
   });
 }
@@ -1757,13 +1770,13 @@ function removeFavorite(item) {
 async function openWholeFolder(g) {
   if (operationBusy) return;
   for (const item of g.items) await openFavorite(item);
-  showToast(`已在新标签页打开 ${g.items.length} 条`);
+  showToast(tr("已在新标签页打开 {0} 条", g.items.length));
 }
 
 async function clearKoiFolder(g) {
   if (operationBusy) return;
   const okToGo = window.confirm(
-    `删除「${g.label}」当前显示的 ${g.items.length} 条 KoiTab 收藏?\n\n只删除这些条目,保留未命中的收藏,不动浏览器书签和任何标签页。`,
+    tr("删除「{0}」当前显示的 {1} 条 KoiTab 收藏?\n\n只删除这些条目,保留未命中的收藏,不动浏览器书签和任何标签页。", favoriteLabel(g), g.items.length),
   );
   if (!okToGo) return;
   await deleteFavorites(g.items.map((item) => item.id));
@@ -1785,9 +1798,9 @@ function renderFavorites() {
   if (statEl) {
     const koi = favKoiTotal();
     const total = favTotal();
-    statEl.textContent = favLoading ? '读取中…'
-      : total ? `KoiTab 收藏 ${koi} 条 · 浏览器书签 ${total - koi} 条`
-      : '还没有任何收藏';
+    statEl.textContent = favLoading ? tr("读取中…")
+      : total ? tr("KoiTab 收藏 {0} 条 · 浏览器书签 {1} 条", koi, total - koi)
+      : tr("还没有任何收藏");
   }
 
   const q = favQuery;
@@ -1807,8 +1820,8 @@ function renderFavorites() {
     const empty = document.createElement('div');
     empty.className = 'koi-empty';
     empty.textContent = q
-      ? '没有匹配的收藏'
-      : '还没有收藏 —— 去「诊断」页归档一些长期没用的页,它们会出现在这里';
+      ? tr("没有匹配的收藏")
+      : tr("还没有收藏 —— 去「诊断」页归档一些长期没用的页,它们会出现在这里");
     listEl.appendChild(empty);
     syncFavToggleAllLabel();
     return;
@@ -1816,8 +1829,8 @@ function renderFavorites() {
 
   const koiShown = shown.filter((g) => g.kind === 'koi');
   const browserShown = shown.filter((g) => g.kind !== 'koi');
-  if (koiShown.length) listEl.appendChild(favSectionEl(SEC_KOI, 'KoiTab 收藏', '藏', koiShown, searching));
-  if (browserShown.length) listEl.appendChild(favSectionEl(SEC_BROWSER, '浏览器书签', '签', browserShown, searching));
+  if (koiShown.length) listEl.appendChild(favSectionEl(SEC_KOI, tr("KoiTab 收藏"), '藏', koiShown, searching));
+  if (browserShown.length) listEl.appendChild(favSectionEl(SEC_BROWSER, tr("浏览器书签"), '签', browserShown, searching));
 
   syncFavToggleAllLabel();
 }
@@ -1833,7 +1846,7 @@ function favSectionEl(key, title, markChar, groups, searching) {
   head.className = 'koi-section-head';
   if (!searching) head.classList.add('is-clickable');
   head.setAttribute('aria-expanded', String(!collapsed));
-  head.title = collapsed ? `展开「${title}」(${total} 条)` : `折叠「${title}」`;
+  head.title = collapsed ? tr("展开「{0}」({1} 条)", title, total) : tr("折叠「{0}」", title);
 
   const caret = document.createElement('span');
   caret.className = 'koi-caret' + (collapsed ? ' is-collapsed' : '');
@@ -1842,6 +1855,7 @@ function favSectionEl(key, title, markChar, groups, searching) {
   const mark = document.createElement('span');
   mark.className = 'koi-section-mark' + (key === SEC_KOI ? ' koi-section-mark-seal' : '');
   mark.textContent = markChar;
+  mark.setAttribute('aria-hidden', 'true');
 
   const name = document.createElement('span');
   name.className = 'koi-section-title';
@@ -1849,7 +1863,7 @@ function favSectionEl(key, title, markChar, groups, searching) {
 
   const count = document.createElement('span');
   count.className = 'koi-section-count';
-  count.textContent = `${groups.length} 组 · ${total} 条`;
+  count.textContent = tr("{0} 组 · {1} 条", groups.length, total);
 
   head.append(caret, mark, name, count);
   if (!searching) {
@@ -1879,8 +1893,8 @@ function favGroupEl(f, searching) {
   head.className = 'koi-group-head';
   head.setAttribute('aria-expanded', String(!isCollapsed));
   head.title = isCollapsed
-    ? `展开「${f.label}」(${f.items.length} 条)`
-    : `折叠「${f.label}」`;
+    ? tr("展开「{0}」({1} 条)", favoriteLabel(f), f.items.length)
+    : tr("折叠「{0}」", favoriteLabel(f));
 
   const caret = document.createElement('span');
   caret.className = 'koi-caret' + (isCollapsed ? ' is-collapsed' : '');
@@ -1892,8 +1906,8 @@ function favGroupEl(f, searching) {
 
   const name = document.createElement('span');
   name.className = 'koi-group-name';
-  name.textContent = f.label;
-  name.title = f.kind === 'koi' ? 'KoiTab 收藏的页面' : '浏览器书签(只读,不会改动)';
+  name.textContent = favoriteLabel(f);
+  name.title = f.kind === 'koi' ? tr("KoiTab 收藏的页面") : tr("浏览器书签(只读,不会改动)");
 
   const count = document.createElement('span');
   count.className = 'koi-group-count';
@@ -1901,8 +1915,8 @@ function favGroupEl(f, searching) {
 
   const openAll = document.createElement('button');
   openAll.className = 'koi-link-btn koi-fav-openall';
-  openAll.textContent = '全部打开';
-  openAll.title = `把「${f.label}」逐个在新标签页打开`;
+  openAll.textContent = tr("全部打开");
+  openAll.title = tr("把「{0}」逐个在新标签页打开", favoriteLabel(f));
   openAll.addEventListener('click', (e) => {
     e.stopPropagation();
     return openWholeFolder(f);
@@ -1913,7 +1927,7 @@ function favGroupEl(f, searching) {
     const clear = document.createElement('button');
     clear.className = 'koi-close-domain';
     clear.textContent = '×';
-    clear.title = `删除「${f.label}」当前显示的 ${f.items.length} 条 KoiTab 收藏`;
+    clear.title = tr("删除「{0}」当前显示的 {1} 条 KoiTab 收藏", favoriteLabel(f), f.items.length);
     clear.addEventListener('click', (e) => {
       e.stopPropagation();
       return clearKoiFolder(f);
@@ -1937,25 +1951,25 @@ function favGroupEl(f, searching) {
   for (const item of f.items) {
     const row = document.createElement('div');
     row.className = 'koi-row';
-    const when = item.archivedAt ? ` · 归档于 ${fmtDate(item.archivedAt)}` : '';
-    row.title = `${item.title || ''}\n${item.url || ''}\n${f.kind === 'koi' ? 'KoiTab 收藏' + when : '浏览器书签'} · 点击在新标签页打开`;
+    const when = item.archivedAt ? tr(" · 归档于 {0}", fmtDate(item.archivedAt)) : '';
+    row.title = tr("{0}\n{1}\n{2} · 点击在新标签页打开", item.title || '', item.url || '', f.kind === 'koi' ? tr("KoiTab 收藏") + when : tr("浏览器书签"));
 
     const fav = document.createElement('span');
     fav.className = 'koi-favicon';
     fav.style.background = domainColor(f.label);
-    fav.textContent = faviconLetter(f.label);
+    fav.textContent = faviconLetter(favoriteLabel(f));
 
     const title = document.createElement('span');
     title.className = 'koi-title';
     const host = (() => { try { return new URL(item.url).hostname.replace(/^www\./, ''); } catch { return ''; } })();
-    title.textContent = item.title || host || item.url || '(无标题)';
+    title.textContent = item.title || host || item.url || tr("(无标题)");
 
     const kidsRow = [fav, title];
     if (f.kind === 'koi') {
       const del = document.createElement('button');
       del.className = 'koi-close';
       del.textContent = '×';
-      del.title = '从 KoiTab 收藏删除(不关浏览器的事)';
+      del.title = tr("从 KoiTab 收藏删除(不关浏览器的事)");
       del.addEventListener('click', (e) => {
         e.stopPropagation();
         return removeFavorite(item);
@@ -1975,16 +1989,30 @@ function favGroupEl(f, searching) {
 /* ---------- init ---------- */
 
 document.addEventListener('DOMContentLoaded', async () => {
+  await KoiI18n.init();
   await Promise.all([loadScope(), loadCollapsed(), loadFavPrefs(), loadArchiveDays(), loadAutoCollapse(), loadView()]);
   syncViewUI();
   if (view === 'fav') await loadFavorites();
-  loadTabs();
+  await loadTabs();
 
   // 版本号显示在右上角小徽标里,便于确认加载的是哪一版
   try {
     const chip = document.getElementById('ver-chip');
     if (chip) chip.textContent = `v${chrome.runtime.getManifest().version}`;
   } catch { /* 忽略 */ }
+
+  document.getElementById('language').addEventListener('change', async (event) => {
+    if (operationBusy) {
+      event.target.value = KoiI18n.preference;
+      return;
+    }
+    try {
+      await runExclusive(() => KoiI18n.setLanguage(event.target.value));
+    } catch (error) {
+      event.target.value = KoiI18n.preference;
+      showToast(tr('语言设置失败,请重试'));
+    }
+  });
 
   const search = document.getElementById('search');
   search.addEventListener('input', () => {

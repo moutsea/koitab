@@ -26,7 +26,7 @@
     "rss": "Per RSS mutationes sequere",
     "original": "Notae antiquiores lingua Sinica",
     "releaseIntro": "Parvae emendationes ad usum navigatorii tranquilliorem.",
-    "demo": "Imago exemplaris · Interfacies extensionis nunc lingua Sinica est",
+    "demo": "Exemplum Sinice · Quinque linguae praesto sunt",
     "next": "Lege etiam",
     "notFound": "Haec pagina nondum scripta est.",
     "notFoundBody": "Pagina non exstat aut alio translata est. Per indicem redire potes."
@@ -134,15 +134,15 @@
     "intro": "Extensione instituta, iconem carpi in serie instrumentorum aperi. Tria spatia statum ostendunt, tabulas ordinant et nexus servatos reddunt.",
     "items": [
       {
-        "title": "A diagnosi (诊断) incipe",
+        "title": "A diagnosi incipe",
         "body": "Elige fenestram praesentem aut omnes fenestras. Inspice duplicata, paginas dispersas et tabulas otiosas. Praevisionem ordinationis vel conservationis lege antequam agas."
       },
       {
-        "title": "Uno actu ordina (一键整理)",
+        "title": "Uno actu ordina",
         "body": "KoiTab duplicata claudit, greges unius tabulae dissolvit, paginas cognatas colligit et tabulas disponit. Exspecta finem operis ante aliam ordinationem vel deletionem."
       },
       {
-        "title": "Tabulas (标签页) perlustra",
+        "title": "Tabulas perlustra",
         "body": "Per situs inspice, titulos gregum contrahe aut per titulum et inscriptionem quaere. Re electa ad tabulam transis. Signum clausurae iuxta gregem paginas illius situs claudit; caute utere."
       },
       {
@@ -150,13 +150,17 @@
         "body": "Limitem 3, 7 aut 30 dierum elige, deinde nexus serva. Tabulae activae et fixae excluduntur. Si nulla tabula convenit, causa ostenditur."
       },
       {
-        "title": "Per collectionem (收藏夹) redi",
+        "title": "Per collectionem redi",
         "body": "Nexus KoiTab et notae navigatorii in partibus distinctis apparent. Nexu aperto ad inscriptionem rursus accedis. Conservatur nexus, non exemplar paginae neque textus formularii nondum missus."
       }
     ],
     "tipTitle": "Ante ordinationem paulisper considera",
     "tip": "Praevisionem primum lege. Clausura duplicatorum textum nondum servatum non coniungit. Opus quod in pagina conficis antea serva.",
-    "workflow": ["Diagnosis", "Tabulae", "Collectio"]
+    "workflow": [
+      "Diagnosis",
+      "Tabulae",
+      "Collectio"
+    ]
   },
   "download": {
     "eyebrow": "DE INSTITUTIONE",
@@ -165,7 +169,7 @@
     "package": "Fasciculus communis pro Chrome et Edge",
     "format": "Fasciculus ZIP · Manifest V3",
     "requirements": "Chrome 121 aut Edge 121 vel recentior. Alii navigatores Chromium, ut Brave et Arc, tentari possunt. Firefox et Safari non sustinentur.",
-    "languageNote": "Hic situs quinque linguas praebet. Interfacies extensionis nunc lingua Sinica est.",
+    "languageNote": "Situs et extensio linguas Sinicam, Anglicam, Iaponicam, Coreanam et Latinam sustinent. Extensio initio linguam navigatoris sequitur; linguam in angulo superiore dextro eligere et servare potes.",
     "steps": [
       {
         "title": "Deprome et extrahe",
@@ -223,7 +227,7 @@
       },
       {
         "q": "Num extensio quoque quinque linguas habet?",
-        "a": "Quinque linguae nunc ad hunc situm pertinent. Interfacies extensionis Sinica manet; rationes instituendi et utendi hic variis linguis leguntur."
+        "a": "Situs et extensio linguas Sinicam, Anglicam, Iaponicam, Coreanam et Latinam sustinent. Extensio initio linguam navigatoris sequitur; linguam in angulo superiore dextro eligere et servare potes."
       },
       {
         "q": "Quae tabulae duplicatae habentur?",
@@ -256,6 +260,15 @@
     ]
   },
   "releases": [
+    {
+      "version": "5.3.0",
+      "title": "Quinque linguae in extensione",
+      "notes": [
+        "Interfacies, diagnosis, optiones, confirmationes et nuntii quinque linguis praesto sunt.",
+        "Linguam navigatoris sequere aut aliam in angulo superiore dextro elige. Translationes in fasciculo inclusae sine conexione ad interrete adhibentur.",
+        "Forma atramento et charta inspirata textibus longioribus aptata est. Mutatio linguae titulos, nexus servatos et regulas ordinandi non mutat."
+      ]
+    },
     {
       "version": "5.2.0",
       "title": "Atramentum, charta et quinque linguae",

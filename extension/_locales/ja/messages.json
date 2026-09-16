@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "KoiTab - タブ整理"
+  },
+  "extensionDescription": {
+    "message": "サイト別のタブ整理、同じ URL の重複除去、未使用タブのローカル保存。五つの表示言語に対応。"
+  },
+  "actionTitle": {
+    "message": "KoiTab - タブを整理"
+  }
+}

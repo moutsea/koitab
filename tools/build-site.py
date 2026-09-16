@@ -123,6 +123,13 @@ def check(version: str):
         assert not any("debug." in n for n in names), "开发用诊断页不该进发布包"
         inner = json.loads(z.read("koitab/manifest.json").decode())
         assert inner["version"] == version, "zip 内 manifest 版本与仓库不一致"
+        assert "koitab/i18n.js" in names, "缺少语言运行时"
+        for locale in ("zh", "en", "ja", "ko", "la"):
+            assert json.loads(z.read(f"koitab/locales/{locale}.json")), f"缺少界面翻译 {locale}"
+        for locale in ("en", "zh_CN", "zh_TW", "ja", "ko"):
+            messages = json.loads(z.read(f"koitab/_locales/{locale}/messages.json"))
+            for key in ("extensionName", "extensionDescription", "actionTitle"):
+                assert messages[key]["message"], f"缺少原生翻译 {locale}/{key}"
     for f in ("app/[lang]/layout.tsx", "app/[lang]/[[...slug]]/page.tsx", "app/[lang]/feed.xml/route.ts",
               "app/sitemap.ts", "app/robots.ts", "wrangler.jsonc"):
         assert os.path.exists(os.path.join(APP, f)), f"缺少 {f}"

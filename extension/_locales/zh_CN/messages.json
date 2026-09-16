@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "KoiTab - 标签页整理助手"
+  },
+  "extensionDescription": {
+    "message": "一键整理浏览器标签页、清理重复网址、本地归档闲置页面。支持中文、英文、日语、韩语与拉丁语。"
+  },
+  "actionTitle": {
+    "message": "KoiTab - 整理标签页"
+  }
+}

@@ -5,7 +5,8 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 // Execute the shipped popup source; Chrome and DOM are isolated in memory.
-const source = fs.readFileSync(path.join(__dirname, '../extension/popup.js'), 'utf8');
+const source = fs.readFileSync(path.join(__dirname, '../extension/i18n.js'), 'utf8') + '\n'
+  + fs.readFileSync(path.join(__dirname, '../extension/popup.js'), 'utf8');
 const DAY = 86400000;
 const NOW = 1800000000000;
 const copy = (value) => structuredClone(value);
@@ -19,8 +20,9 @@ function deferred() {
   const promise = new Promise((r) => { resolve = r; });
   return { promise, resolve };
 }
-function setup(tabs = [], saved = []) {
+function setup(tabs = [], saved = [], options = {}) {
   const state = { tabs: copy(tabs), saved: copy(saved), removed: [], writes: 0, confirms: [], confirmResult: true };
+  state.preferences = copy(options.preferences || {});
   const elements = new Map();
   const created = [];
   function element() {
@@ -29,7 +31,9 @@ function setup(tabs = [], saved = []) {
       classList: { add() {}, remove() {}, toggle() {} },
       append(...children) { this.children.push(...children); },
       appendChild(child) { this.children.push(child); },
-      setAttribute() {},
+      attributes: {},
+      setAttribute(k, v) { this.attributes[k] = v; },
+      getAttribute(k) { return this.attributes[k]; },
       addEventListener(event, cb) { this.listeners[event] = cb; },
     };
     return e;
@@ -37,22 +41,27 @@ function setup(tabs = [], saved = []) {
   const settings = ['scope', 'days', 'auto'].map(() => element());
   let init;
   const document = {
+    documentElement: {},
     addEventListener(event, cb) { if (event === 'DOMContentLoaded') init = cb; },
     createElement() { const e = element(); created.push(e); return e; },
     getElementById(id) { if (!elements.has(id)) elements.set(id, element()); return elements.get(id); },
     querySelector() { return element(); },
     querySelectorAll(selector) {
-      if (selector.includes('#seg-scope button')) return [...settings, ...created.filter((e) => /koi-close|koi-fav-openall/.test(e.className || ''))];
+      if (selector.includes('#seg-scope button')) return [...settings, document.getElementById('language'), ...created.filter((e) => /koi-close|koi-fav-openall/.test(e.className || ''))];
       return [];
     },
   };
   const event = { addListener() {} };
   class Clock extends Date { static now() { return NOW; } }
   const context = vm.createContext({
-    URL, Date: Clock, console: { warn() {}, error() {} },
+    URL, Date: Clock, navigator: { language: options.browserLanguage || 'zh-CN' },
+    fetch: async (url) => ({ ok: true, json: async () => JSON.parse(fs.readFileSync(path.join(__dirname, '../extension', url), 'utf8')) }),
+    console: { warn() {}, error() {} },
     setTimeout() {}, clearTimeout() {}, document,
     window: { confirm(msg) { state.confirms.push(msg); return state.confirmResult; } },
     chrome: {
+      i18n: { getUILanguage: () => options.browserLanguage || 'zh-CN' },
+      action: { setTitle: async ({title}) => { state.actionTitle = title; } },
       tabs: {
         query: async (q) => copy(state.tabs.filter((t) => !q.currentWindow || t.windowId === 1)),
         get: async (id) => { const t = state.tabs.find((t) => t.id === id); if (!t) throw Error('No tab'); return copy(t); },
@@ -63,11 +72,11 @@ function setup(tabs = [], saved = []) {
       tabGroups: { update: async () => {} },
       windows: { getCurrent: async () => ({ id: 1 }), onRemoved: event },
       storage: { local: {
-        get: async () => ({ koiArchived: copy(state.saved) }),
-        set: async (obj) => { if ('koiArchived' in obj) { state.writes++; state.saved = copy(obj.koiArchived); } },
+        get: async () => ({ ...copy(state.preferences), koiArchived: copy(state.saved) }),
+        set: async (obj) => { if ('koiArchived' in obj) { state.writes++; state.saved = copy(obj.koiArchived); } else { Object.assign(state.preferences, copy(obj)); } },
       } },
       bookmarks: { getTree: async () => [] },
-      runtime: { getManifest: () => ({ version: '5.1.1' }) },
+      runtime: { getManifest: () => ({ version: '5.3.0' }), getURL: (url) => url },
     }, fixture: copy(tabs),
   });
   vm.runInContext(source, context);
@@ -225,4 +234,96 @@ test('execution lock releases after an unexpected failure', async () => {
   await assert.rejects(x.run('runExclusive(async () => { throw new Error("failure"); })'), /failure/);
   assert.equal(x.run('operationBusy'), false);
   assert.equal(await x.run('runExclusive(async () => 42)'), 42);
+});
+
+for (const locale of ['zh', 'en', 'ja', 'ko', 'la']) {
+  test(`${locale}: language persists, diagnostics translate, and user data stays intact`, async () => {
+    const x = setup([
+      tab(1, 'chrome://extensions/', { title: '用户自定义标签' }),
+      tab(2, 'https://example.org/#one'), tab(3, 'https://example.org/#one'),
+    ], [favorite('saved', 'https://saved.example/')]);
+    await x.init();
+    const catalog = JSON.parse(fs.readFileSync(path.join(__dirname, `../extension/locales/${locale}.json`)));
+    await x.run(`KoiI18n.setLanguage('${locale}')`);
+    x.run('diagnosed = true; render()');
+    assert.equal(x.run('KoiI18n.locale'), locale);
+    assert.equal(x.state.preferences.koiLanguage, locale);
+    assert.equal(x.context.document.documentElement.lang, locale === 'zh' ? 'zh-CN' : locale);
+    assert.equal(x.state.actionTitle, `KoiTab · ${catalog['一键整理']}`);
+    assert.equal(x.run('metricRows(computeMetrics())[0].label'), catalog['重复网页']);
+    assert.equal(x.run('displayDomain(normalizeDomain("chrome://extensions/"))'), catalog['浏览器页面']);
+    assert.equal(x.run('normalizeDomain("chrome://extensions/")'), '浏览器页面');
+    assert.equal(x.run('favoriteLabel({kind:"browser", label:"浏览器页面"})'), '浏览器页面');
+    assert.equal(x.run('allTabs[0].title'), '用户自定义标签');
+    assert.equal(x.state.writes, 0);
+    assert.deepEqual(x.state.removed, []);
+    assert.equal(x.state.saved.length, 1);
+    const reopened = setup([], [], { preferences: x.state.preferences, browserLanguage: 'de-DE' });
+    await reopened.init();
+    assert.equal(reopened.run('KoiI18n.locale'), locale);
+    // Safety rules are independent of the displayed language.
+    const plan = x.run('planCollect(allTabs, currentWindowId)');
+    assert.ok(!JSON.stringify(plan).includes('chrome://extensions/'));
+  });
+}
+
+test('automatic language uses browser language, unsupported languages fall back to English', async () => {
+  for (const [browserLanguage, expected] of [['zh-TW','zh'],['en-GB','en'],['ja-JP','ja'],['ko_KR','ko'],['la','la'],['fr-FR','en']]) {
+    const x = setup([], [], { browserLanguage });
+    await x.init();
+    assert.equal(x.run('KoiI18n.locale'), expected);
+    assert.equal(x.run('KoiI18n.preference'), 'auto');
+  }
+  const x = setup([], [], { browserLanguage: 'ja-JP', preferences: { koiLanguage: '../../invalid' } });
+  await x.init();
+  assert.equal(x.run('KoiI18n.locale'), 'ja');
+  await x.run('KoiI18n.setLanguage("en")');
+  await x.run('KoiI18n.setLanguage("auto")');
+  assert.equal(x.run('KoiI18n.locale'), 'ja');
+});
+
+test('failed language load or persistence keeps current locale and data unchanged', async () => {
+  const x = setup([], [favorite('saved', 'https://example.org')]);
+  await x.init();
+  x.context.fetch = async () => { throw Error('catalog unavailable'); };
+  await assert.rejects(x.run('KoiI18n.setLanguage("la")'), /catalog unavailable/);
+  assert.equal(x.run('KoiI18n.locale'), 'zh');
+  x.context.fetch = async () => ({ok: true, json: async () => JSON.parse(fs.readFileSync(path.join(__dirname,'../extension/locales/en.json')))});
+  x.context.chrome.storage.local.set = async () => { throw Error('storage unavailable'); };
+  x.elements.get('language').value = 'en';
+  await x.elements.get('language').listeners.change({target: x.elements.get('language')});
+  assert.equal(x.run('KoiI18n.locale'), 'zh');
+  assert.equal(x.state.saved.length, 1);
+  assert.equal(x.run('operationBusy'), false);
+  assert.equal(x.elements.get('language').disabled, false);
+  assert.equal(x.elements.get('toast').textContent, '语言设置失败,请重试');
+});
+
+test('translated placeholders preserve literal user text and localized confirmation protects hidden entries', async () => {
+  const x = setup([], [favorite('visible','https://a.example/'), favorite('hidden','https://b.example/')]);
+  await x.init();
+  await x.run('KoiI18n.setLanguage("en")');
+  const value = '<img src=x> $& {1}';
+  x.context.titleFixture = value;
+  assert.equal(x.run('tr("折叠 {0}", titleFixture)'), `Collapse ${value}`);
+  await x.run('clearKoiFolder({kind:"koi",label:"a.example",items:[{id:"visible"}]})');
+  assert.match(x.state.confirms[0], /Delete 1 visible KoiTab entries/);
+  assert.match(x.state.confirms[0], /Hidden entries, browser bookmarks and open tabs will remain unchanged/);
+  assert.deepEqual(x.state.saved.map((x) => x.id), ['hidden']);
+});
+
+test('language selector cannot run during a destructive operation', async () => {
+  const x = setup();
+  await x.init();
+  const gate = deferred();
+  x.context.languageGate = gate.promise;
+  const running = x.run('runExclusive(() => languageGate)');
+  assert.equal(x.elements.get('language').disabled, true);
+  x.elements.get('language').value = 'en';
+  await x.elements.get('language').listeners.change({target:x.elements.get('language')});
+  assert.equal(x.run('KoiI18n.locale'), 'zh');
+  assert.equal(x.elements.get('language').value, 'auto');
+  gate.resolve();
+  await running;
+  assert.equal(x.elements.get('language').disabled, false);
 });

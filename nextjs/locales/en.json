@@ -26,7 +26,7 @@
     "rss": "Subscribe via RSS",
     "original": "Earlier release notes in Chinese",
     "releaseIntro": "Small improvements for a calmer everyday browser.",
-    "demo": "Interface illustration · The extension UI is currently in Chinese",
+    "demo": "Chinese interface example · Five languages available",
     "next": "Continue reading",
     "notFound": "This page is still unwritten.",
     "notFoundBody": "The page does not exist or has moved. Find your way back through the contents."
@@ -134,15 +134,15 @@
     "intro": "Install KoiTab, then open the koi icon in your toolbar. Three workspaces help you understand the clutter, arrange your pages and revisit saved links.",
     "items": [
       {
-        "title": "Start with Diagnosis (诊断)",
+        "title": "Start with Diagnosis",
         "body": "Choose the current window or all windows. Review duplicates, scattered pages and idle tabs. Check the organization and archive previews before running either action."
       },
       {
-        "title": "Organize with one click (一键整理)",
+        "title": "Organize with one click",
         "body": "KoiTab removes duplicate pages, ungroups single-tab groups, gathers related pages and reorders tabs. Wait for it to finish before starting another organizing or deletion action."
       },
       {
-        "title": "Browse the Tabs view (标签页)",
+        "title": "Browse the Tabs view",
         "body": "Browse by site, collapse headings, or search by title and address. Select an entry to jump to its tab. The close control beside a group closes that site's pages, so use it deliberately."
       },
       {
@@ -150,13 +150,17 @@
         "body": "Choose a 3-, 7- or 30-day threshold, then archive. Active and pinned pages are excluded. If nothing qualifies, KoiTab explains why."
       },
       {
-        "title": "Return through Collections (收藏夹)",
+        "title": "Return through Collections",
         "body": "KoiTab's saved links and browser bookmarks appear in separate sections. Open a saved entry to revisit its URL. An archive is a link, not a webpage snapshot or a copy of unsent form data."
       }
     ],
     "tipTitle": "Leave a little room for care",
     "tip": "Review the preview first. Closing duplicates does not merge unsaved page content; save your work in any page you are editing.",
-    "workflow": ["Diagnosis", "Tabs", "Collections"]
+    "workflow": [
+      "Diagnosis",
+      "Tabs",
+      "Collections"
+    ]
   },
   "download": {
     "eyebrow": "GET KOITAB",
@@ -165,7 +169,7 @@
     "package": "One package for Chrome & Edge",
     "format": "ZIP archive · Manifest V3",
     "requirements": "Chrome 121+ or Edge 121+. Other Chromium browsers such as Brave and Arc may work; Firefox and Safari are not supported.",
-    "languageNote": "The website is available in five languages. The extension interface is currently in Chinese.",
+    "languageNote": "Both the website and extension support Chinese, English, Japanese, Korean and Latin. The extension follows your browser language by default; choose a language at the top right to save your preference.",
     "steps": [
       {
         "title": "Download and unzip",
@@ -223,7 +227,7 @@
       },
       {
         "q": "Is the extension available in five languages too?",
-        "a": "The five-language support currently applies to this website. The extension UI is still in Chinese, with installation and usage guidance available here in each language."
+        "a": "Both the website and extension support Chinese, English, Japanese, Korean and Latin. The extension follows your browser language by default; choose a language at the top right to save your preference."
       },
       {
         "q": "What counts as a duplicate tab?",
@@ -256,6 +260,15 @@
     ]
   },
   "releases": [
+    {
+      "version": "5.3.0",
+      "title": "Five languages in the extension",
+      "notes": [
+        "The interface, diagnosis reports, settings, confirmations and feedback now support Chinese, English, Japanese, Korean and Latin.",
+        "Follow the browser language or save a manual choice at the top right. All translations are bundled for offline use.",
+        "The ink-and-paper design accommodates longer text. Switching languages preserves tab titles, saved links and organizing rules."
+      ]
+    },
     {
       "version": "5.2.0",
       "title": "Ink, paper and five languages",

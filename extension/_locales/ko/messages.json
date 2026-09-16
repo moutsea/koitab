@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "KoiTab - 탭 정리"
+  },
+  "extensionDescription": {
+    "message": "사이트별 탭 정리, 동일 URL 중복 제거, 미사용 페이지 로컬 보관. 다섯 가지 표시 언어를 지원합니다."
+  },
+  "actionTitle": {
+    "message": "KoiTab - 탭 정리"
+  }
+}

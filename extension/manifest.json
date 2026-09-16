@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "KoiTab - 标签页整理助手",
+  "name": "__MSG_extensionName__",
   "short_name": "KoiTab",
-  "version": "5.2.0",
-  "description": "一键整理浏览器标签页:合并同类网站、关闭重复网页,让标签栏井井有条。",
+  "version": "5.3.0",
+  "description": "__MSG_extensionDescription__",
   "permissions": [
     "tabs",
     "tabGroups",
@@ -11,7 +11,7 @@
     "storage"
   ],
   "action": {
-    "default_title": "KoiTab - 整理标签页",
+    "default_title": "__MSG_actionTitle__",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
@@ -26,5 +26,6 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "minimum_chrome_version": "121"
+  "minimum_chrome_version": "121",
+  "default_locale": "en"
 }

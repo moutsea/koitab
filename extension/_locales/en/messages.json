@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "KoiTab - Tab Organizer"
+  },
+  "extensionDescription": {
+    "message": "Organize tabs by site, remove exact duplicates and save idle pages locally. Supports five interface languages."
+  },
+  "actionTitle": {
+    "message": "KoiTab - Organize tabs"
+  }
+}

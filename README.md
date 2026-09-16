@@ -22,8 +22,10 @@
 ```
 koitab/
 ├── extension/          # 浏览器插件(Manifest V3,免构建)
-│   ├── manifest.json   # 版本号在这里(当前 5.2.0)
+│   ├── manifest.json   # 版本号在这里(当前 5.3.0)
 │   ├── popup.html / popup.css / popup.js
+│   ├── i18n.js / locales/  # 五语界面与本地语言偏好
+│   ├── _locales/       # Chrome 原生扩展名称与描述翻译
 │   ├── debug.html / debug.js  # 诊断页(开发用,只读):验证 lastAccessed 是否跨重启保留
 │   └── icons/          # 插件图标(宣纸底圆角 + 手绘黑墨,由 logo 原图生成)
 ├── nextjs/             # 官网 koitab.com(Next.js App Router,SSG,部署到 Cloudflare Workers)
@@ -102,7 +104,7 @@ npm run build        # 生产构建(验证用)
 
 子页面使用相同后缀，例如 `/en/features`、`/ja/guide`、`/ko/download`、`/la/privacy`。
 语言切换保留当前页面，使用真实链接，不依赖浏览器翻译或客户端文字替换。
-官网支持五语，**扩展界面仍为中文**，下载页已明确说明。
+官网和插件均支持中文、英文、日语、韩语和拉丁语。插件默认跟随浏览器语言（不支持时使用英文），也可以在右上角切换并保存选择。语言文件随包提供，无需联网；切换不会改写标签标题或收藏。
 
 - `[lang]/layout.tsx` 生成正确的 HTML `lang`，页面正文在构建时完整输出。
 - `lib/site.ts` 为每页生成独立标题、描述、canonical、Open Graph 与 Twitter 元数据。

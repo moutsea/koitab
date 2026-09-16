@@ -90,7 +90,7 @@ def run():
             assert p.jsonld, f"Missing JSON-LD: {path}"
             for data in p.jsonld:
                 if data["@type"] == "SoftwareApplication":
-                    assert data["softwareVersion"] == VERSION and data["inLanguage"] == "zh-CN", path
+                    assert data["softwareVersion"] == VERSION and set(data["inLanguage"]) == set(LANGUAGES.values()), path
                 if data["@type"] == "FAQPage":
                     assert section == "faq" and len(data["mainEntity"]) == len(dictionary["faq"]["items"]), path
                     assert all(item["name"] in html for item in data["mainEntity"]), path

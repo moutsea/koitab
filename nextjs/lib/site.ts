@@ -102,7 +102,7 @@ export function structuredData(locale: Locale, section: Section) {
       downloadUrl: `${origin}${downloadPath}`,
       softwareVersion: version,
       description: d.meta.home.description,
-      inLanguage: "zh-CN",
+      inLanguage: locales.map((l) => languages[l].tag),
       isAccessibleForFree: true,
       offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
     });
