@@ -168,5 +168,17 @@
   "拆开 {0} 个混合分组": "Separa {0} greges mixtos",
   "已按所选规则拆开混合分组": "Greges mixti secundum regulam electam separati sunt",
   "分组设置保存失败,请重试": "Optio gregum servari non potuit. Iterum conare.",
-  "更新 {0} 个分组名称": "Renova {0} nomina gregum"
+  "更新 {0} 个分组名称": "Renova {0} nomina gregum",
+  "浏览器分组": "Greges navigatoris",
+  "浏览器分组（{0}）": "Greges navigatoris ({0})",
+  "取消全部分组": "Omnes dissolve",
+  "取消分组": "Dissolve",
+  "取消分组：{0}": "Dissolve: {0}",
+  "未命名分组": "Grex sine nomine",
+  "只移除浏览器分组，保留所有标签页。下方列表仍按整理规则分类；搜索不影响此面板。": "Greges navigatoris dissolve, omnibus tabulis apertis. Index inferior regulam ordinandi retinet; quaestio hanc tabulam non colat.",
+  "此范围内没有浏览器分组": "Nulli greges navigatoris in hoc ambitu",
+  "已取消分组，所有标签页保持打开": "Greges dissoluti sunt. Omnes tabulae apertae manent.",
+  "有 {0} 个标签页未能取消分组，请重试；未关闭任何标签页": "{0} tabulae e gregibus solvi non potuerunt. Iterum conare; nulla tabula clausa est.",
+  "取消分组失败，请重试；未关闭任何标签页": "Greges dissolvi non potuerunt. Iterum conare; nulla tabula clausa est.",
+  "范围设置失败，请重试": "Ambitus servari non potuit. Iterum conare."
 }

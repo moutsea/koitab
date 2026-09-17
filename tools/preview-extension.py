@@ -3,7 +3,7 @@
 Run: python3 tools/preview-extension.py
 Open: http://127.0.0.1:3200/popup.html?lang=zh&view=tabs
 Views: ops, tabs, fav. Languages: zh, en, ja, ko, la.
-Only diagnosis/navigation/search work; mutations cannot touch real browser data.
+Diagnosis/navigation/search and ungrouping operate only on isolated sample data.
 """
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path

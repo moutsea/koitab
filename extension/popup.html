@@ -111,6 +111,19 @@
 
     <!-- ② 标签页:分组列表 -->
     <section class="koi-panel" id="panel-tabs">
+      <details class="koi-native-groups" id="native-groups">
+        <summary id="native-group-summary" data-i18n="浏览器分组">浏览器分组</summary>
+        <div class="koi-native-toolbar">
+          <label for="group-scope" data-i18n="整理范围">整理范围</label>
+          <select id="group-scope">
+            <option value="window" data-i18n="本窗口">本窗口</option>
+            <option value="all" data-i18n="所有窗口">所有窗口</option>
+          </select>
+          <button id="btn-ungroup-all" class="koi-link-btn" data-i18n="取消全部分组">取消全部分组</button>
+        </div>
+        <p class="koi-setting-hint" data-i18n="只移除浏览器分组，保留所有标签页。下方列表仍按整理规则分类；搜索不影响此面板。">只移除浏览器分组，保留所有标签页。下方列表仍按整理规则分类；搜索不影响此面板。</p>
+        <div id="native-group-list"></div>
+      </details>
       <div class="koi-searchbar">
         <input id="search" type="search" placeholder="搜索标签页…" data-i18n-placeholder="搜索标签页…" autocomplete="off" spellcheck="false" />
       </div>

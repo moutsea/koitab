@@ -151,6 +151,10 @@
         "body": "KoiTab removes duplicate pages, ungroups single-tab groups, gathers related pages and reorders tabs. Wait for it to finish before starting another organizing or deletion action."
       },
       {
+        "title": "Ungroup and keep every tab",
+        "body": "In Tabs, expand Browser groups to ungroup a named browser group, or choose This window or All windows and ungroup all. This only removes browser grouping: it does not close, deduplicate, archive or explicitly move tabs. The list below still uses your grouping rule; search does not filter this panel. Organize again to rebuild groups."
+      },
+      {
         "title": "Browse the Tabs view",
         "body": "Browse by site, collapse headings, or search by title and address. Select an entry to jump to its tab. The close control beside a group closes that site's pages, so use it deliberately."
       },
@@ -173,7 +177,7 @@
     "screenshots": {
       "note": "Sample data · Select an image to view it at full size",
       "diagnosis": "Diagnosis: grouping detail and organization preview",
-      "tabs": "Tabs: groups by site, search and folding",
+      "tabs": "Tabs: browser group controls, search and categories",
       "collections": "Collections: saved links and read-only browser bookmarks"
     }
   },
@@ -249,6 +253,10 @@
         "a": "After diagnosis, choose Coarse, Medium or Fine on the Organize card. Coarse combines the main site; Medium separates subdomains such as Gmail and other Google apps; Fine also separates Google Docs, Sheets, Slides and Excel, document or PDF files on the same host. Coarse is the default. Your choice is saved automatically and browser groups change when you organize. Fine recognizes document, spreadsheets, presentation and forms paths on docs.google.com, and .xls/.xlsx/.xlsm/.xlsb, .doc/.docx, .ppt/.pptx, .ods/.odt/.odp, .csv and .pdf at the end of a URL path. Other pages fall back to subdomains. Document IDs, query strings and hashes do not create groups. Single tabs stay ungrouped; saved collections keep their categories."
       },
       {
+        "q": "How can I ungroup without closing tabs?",
+        "a": "In Tabs, expand Browser groups to ungroup a named browser group, or choose This window or All windows and ungroup all. This only removes browser grouping: it does not close, deduplicate, archive or explicitly move tabs. The list below still uses your grouping rule; search does not filter this panel. Organize again to rebuild groups."
+      },
+      {
         "q": "What counts as a duplicate tab?",
         "a": "The complete URL must match, including the path, query and hash. Different routes remain separate. Page state such as unsent form input is not compared, so save your work before organizing."
       },
@@ -279,6 +287,13 @@
     ]
   },
   "releases": [
+    {
+      "version": "5.5.0",
+      "title": "Ungroup and keep every tab",
+      "notes": [
+        "In Tabs, expand Browser groups to ungroup a named browser group, or choose This window or All windows and ungroup all. This only removes browser grouping: it does not close, deduplicate, archive or explicitly move tabs. The list below still uses your grouping rule; search does not filter this panel. Organize again to rebuild groups."
+      ]
+    },
     {
       "version": "5.4.0",
       "title": "Flexible grouping, less waiting",

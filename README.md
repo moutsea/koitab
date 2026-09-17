@@ -10,6 +10,7 @@
 
 - **先诊断，再整理**：查看重复、分散和长期未用的标签，提前了解整理与归档的结果。
 - **一键整理**：粗 / 中 / 细三档分组，可区分 Gmail、Google 文档与表格、Excel / PDF 等文件；批量跨窗口归并，清理完整网址相同的重复页。
+- **取消分组**：在插件里取消单个或全部浏览器分组，所有标签页保持打开。
 - **暂存闲置页面**：将超过 3 / 7 / 30 天未用的标签先保存到本地收藏，再关闭；固定和正在浏览的标签会保留。
 - **快速找回**：按标题或网址搜索，折叠站点分组，在收藏夹重新打开保存的链接；浏览器书签只读展示。
 - **五种语言**：中文、English、日本語、한국어、Latina，自动跟随浏览器，也可手动切换。
@@ -19,9 +20,9 @@
 
 截图来自实际插件界面的浏览器渲染，使用示例标签与收藏。
 
-| 诊断与整理预览 | 按站点浏览标签 | 收藏与浏览器书签 |
+| 诊断与整理预览 | 分组管理与搜索 | 收藏与浏览器书签 |
 | --- | --- | --- |
-| <img src="nextjs/public/screenshots/diagnosis-zh.webp" width="280" alt="诊断页显示分组精细度、整理与归档预览"> | <img src="nextjs/public/screenshots/tabs-zh.webp" width="280" alt="标签页按站点分组，支持搜索与折叠"> | <img src="nextjs/public/screenshots/collections-zh.webp" width="280" alt="收藏夹分别展示 KoiTab 本地收藏与只读浏览器书签"> |
+| <img src="nextjs/public/screenshots/diagnosis-zh.webp" width="280" alt="诊断页显示分组精细度、整理与归档预览"> | <img src="nextjs/public/screenshots/tabs-zh.webp" width="280" alt="直接取消浏览器分组，标签页保持打开，支持搜索与分类"> | <img src="nextjs/public/screenshots/collections-zh.webp" width="280" alt="收藏夹分别展示 KoiTab 本地收藏与只读浏览器书签"> |
 
 ## 安装
 

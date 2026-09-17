@@ -80,7 +80,7 @@
     title: titles[i],
     windowId: 1,
     index: i,
-    groupId: -1,
+    groupId: params.get("groups") === "1" ? (i < 3 ? 10 : i < 5 ? 11 : -1) : -1,
     active: i === 1,
     pinned: false,
     lastAccessed: now - (i === 1 ? 0 : 12 * 86400000),
@@ -124,11 +124,13 @@
     tabs: {
       query: async () => tabs,
       get: async (id) => tabs.find((t) => t.id === id),
+      ungroup: async (ids) => { for (const tab of tabs) { if ([].concat(ids).includes(tab.id)) tab.groupId = -1; } },
       onCreated: events,
       onRemoved: events,
       onUpdated: events,
     },
-    tabGroups: { query: async () => [] },
+    tabGroups: { query: async () => [...new Set(tabs.map((t) => t.groupId))]
+      .filter((id) => id !== -1).map((id) => ({id, title: id === 10 ? 'github.com' : 'wikipedia.org'})) },
     windows: { getCurrent: async () => ({ id: 1 }), onRemoved: events },
     bookmarks: {
       getTree: async () => [

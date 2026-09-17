@@ -526,6 +526,80 @@ function groupTabsByDomain(tabs) {
 
 /* ---------- render ---------- */
 
+function renderNativeGroups() {
+  const groups = groupMembership(allTabs);
+  document.getElementById('native-group-summary').textContent = tr('浏览器分组（{0}）', groups.size);
+  document.getElementById('group-scope').value = scope;
+  const list = document.getElementById('native-group-list');
+  list.textContent = '';
+  for (const [id, tabs] of groups) {
+    const row = document.createElement('div');
+    row.className = 'koi-native-row';
+    const title = nativeGroupTitles.get(id) || tr('未命名分组');
+    const label = document.createElement('span');
+    label.className = 'koi-native-name';
+    label.textContent = title;
+    label.title = title;
+    const count = document.createElement('small');
+    const windowLabel = windowChips.get(tabs[0].windowId);
+    count.textContent = tr('{0} 个标签页', tabs.length) + (scope === 'all'
+      ? ' · ' + (windowLabel === '本' ? tr('本窗口') : tr('窗口 {0}', windowLabel)) : '');
+    const button = document.createElement('button');
+    button.className = 'koi-link-btn koi-ungroup';
+    button.textContent = tr('取消分组');
+    button.setAttribute('aria-label', tr('取消分组：{0}', title));
+    button.addEventListener('click', () => removeBrowserGroups(id));
+    row.append(label, count, button);
+    list.appendChild(row);
+  }
+  if (!groups.size) {
+    const empty = document.createElement('p');
+    empty.className = 'koi-setting-hint';
+    empty.textContent = tr('此范围内没有浏览器分组');
+    list.appendChild(empty);
+  }
+  document.getElementById('btn-ungroup-all').disabled = operationBusy || !groups.size;
+}
+
+// Ungroup is deliberately separate from organize: never close, move, dedupe or
+// archive tabs. Re-read membership so hidden search results and new group members
+// are included, and stale UI IDs cannot affect a different group.
+function removeBrowserGroups(groupId = null) {
+  return runExclusive(async () => {
+    try {
+      await loadTabs();
+      const targets = allTabs.filter((t) => isGroupedTab(t) && (groupId === null || t.groupId === groupId))
+        .map(({id, groupId, windowId}) => ({id, groupId, windowId}));
+      if (!targets.length) { showToast(tr('此范围内没有浏览器分组')); return; }
+      try {
+        await chrome.tabs.ungroup(targets.map((t) => t.id));
+      } catch (error) {
+        // A tab may have closed or changed group while the batch was in flight.
+        // Retry surviving members only; never ungroup a tab from its new group.
+        for (const target of targets) {
+          try {
+            const tab = await chrome.tabs.get(target.id);
+            if (tab.groupId === target.groupId && tab.windowId === target.windowId) {
+              await chrome.tabs.ungroup(tab.id);
+            }
+          } catch (error) { console.warn('[KoiTab] ungroup tab failed', target.id, error); }
+        }
+      }
+      await loadTabs();
+      const expected = new Map(targets.map((t) => [t.id, t]));
+      const remaining = allTabs.filter((t) => {
+        const before = expected.get(t.id);
+        return before && t.groupId === before.groupId && t.windowId === before.windowId;
+      }).length;
+      showToast(remaining ? tr('有 {0} 个标签页未能取消分组，请重试；未关闭任何标签页', remaining)
+        : tr('已取消分组，所有标签页保持打开'));
+    } catch (error) {
+      console.warn('[KoiTab] ungroup failed', error);
+      showToast(tr('取消分组失败，请重试；未关闭任何标签页'));
+    }
+  });
+}
+
 function renderTabList() {
   const listEl = document.getElementById('tab-list');
   listEl.textContent = '';
@@ -625,7 +699,7 @@ function renderTabList() {
 }
 
 function render() {
-  if (view === 'tabs') renderTabList();
+  if (view === 'tabs') { renderNativeGroups(); renderTabList(); }
   const groupCount = domainCounts().size;
   const m = computeMetrics();
   const parts = [tr("{0} 个标签页", allTabs.length)];
@@ -663,7 +737,7 @@ function render() {
   syncToggleAllLabel();
   document.querySelectorAll(
     '#seg-scope button, #seg-days button, #seg-auto button, #koi-nav button, '
-    + '.koi-close, .koi-close-domain, .koi-fav-openall, #btn-fav-refresh, #language, #grouping-mode, #btn-diagnose, #btn-diagnose-again',
+    + '.koi-ungroup, #group-scope, .koi-close, .koi-close-domain, .koi-fav-openall, #btn-fav-refresh, #language, #grouping-mode, #btn-diagnose, #btn-diagnose-again',
   ).forEach((button) => { button.disabled = operationBusy; });
 }
 
@@ -2211,6 +2285,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadFavorites(true);
     render();
   });
+  document.getElementById('btn-ungroup-all').addEventListener('click', () => removeBrowserGroups());
+  document.getElementById('group-scope').addEventListener('change', async (event) => {
+    const next = event.target.value;
+    if (operationBusy || !['window', 'all'].includes(next)) { event.target.value = scope; return; }
+    try {
+      await runExclusive(async () => {
+        await chrome.storage.local.set({ [SCOPE_KEY]: next });
+        scope = next;
+        syncScopeUI();
+        await loadTabs();
+      });
+    } catch (error) {
+      event.target.value = scope;
+      showToast(tr('范围设置失败，请重试'));
+    }
+  });
   document.getElementById('btn-toggle-all').addEventListener('click', toggleAllGroups);
 
   chrome.tabs.onCreated.addListener(scheduleTabRefresh);
@@ -2219,7 +2309,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (info.url || info.title || 'groupId' in info || 'pinned' in info) scheduleTabRefresh();
   });
   chrome.windows.onRemoved.addListener(scheduleTabRefresh);
-  for (const event of [chrome.tabs.onMoved, chrome.tabs.onAttached, chrome.tabs.onDetached]) {
+  for (const event of [chrome.tabs.onMoved, chrome.tabs.onAttached, chrome.tabs.onDetached,
+    chrome.tabGroups.onCreated, chrome.tabGroups.onUpdated, chrome.tabGroups.onRemoved]) {
     event?.addListener(scheduleTabRefresh);
   }
 });

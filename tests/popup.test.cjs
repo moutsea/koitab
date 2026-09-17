@@ -47,7 +47,7 @@ function setup(tabs = [], saved = [], options = {}) {
     getElementById(id) { if (!elements.has(id)) elements.set(id, element()); return elements.get(id); },
     querySelector() { return element(); },
     querySelectorAll(selector) {
-      if (selector.includes('#seg-scope button')) return [...settings, document.getElementById('language'), document.getElementById('grouping-mode'), ...created.filter((e) => /koi-close|koi-fav-openall/.test(e.className || ''))];
+      if (selector.includes('#seg-scope button')) return [...settings, document.getElementById('language'), document.getElementById('grouping-mode'), document.getElementById('group-scope'), ...created.filter((e) => /koi-close|koi-fav-openall|koi-ungroup/.test(e.className || ''))];
       return [];
     },
   };
@@ -540,4 +540,86 @@ test('a pure group gets its generated title updated on mode change, while custom
     assert.equal(calls.titles.get(9), title === 'google.com' ? 'docs.google.com · Docs' : title);
     assert.equal(x.run('computeMetrics().tidySteps.length'), 0);
   }
+});
+
+for (const scope of ['window','all']) {
+  test(`ungroup all in ${scope} scope preserves tabs, URLs, windows, positions, pins and archives`, async () => {
+    const x = setup([tab(1,'https://a.example/1',{groupId:8}),tab(2,'https://b.example/2',{groupId:8}),
+      tab(3,'https://c.example/',{groupId:9,windowId:2}),tab(4,'https://a.example/1',{pinned:true}),
+      tab(5,'https://a.example/1')], [favorite('saved','https://saved.example/')], {preferences:{koiScope:scope}});
+    const calls = modelBrowser(x); await x.init();
+    const before = copy(x.state.tabs);
+    await x.run('removeBrowserGroups()');
+    assert.deepEqual(x.state.tabs.map(({groupId,...rest})=>rest), before.map(({groupId,...rest})=>rest));
+    assert.deepEqual(x.state.tabs.map((t)=>t.groupId), [-1,-1,scope==='all'?-1:9,-1,-1]);
+    assert.equal(x.state.writes,0); assert.deepEqual(x.state.removed,[]);
+    assert.deepEqual(calls.move,[]); assert.deepEqual(calls.group,[]); assert.deepEqual(calls.windows,[]);
+    assert.equal(x.elements.get('toast').textContent,'已取消分组，所有标签页保持打开');
+  });
+}
+
+test('single group cancellation uses native ID, includes search-hidden/new members, and preserves same-domain groups', async () => {
+  const x = setup([tab(1,'https://a.example/visible',{groupId:8}),tab(2,'https://b.example/hidden',{groupId:8}),
+    tab(3,'https://a.example/other',{groupId:9})]);
+  modelBrowser(x); await x.init(); x.run("query='visible'; view='tabs'; render()");
+  x.state.tabs.push(tab(4,'https://c.example/new',{groupId:8}));
+  await x.run('removeBrowserGroups(8)');
+  assert.deepEqual(x.state.tabs.map((t)=>t.groupId), [-1,-1,9,-1]);
+  assert.deepEqual(x.state.removed,[]);
+  await x.run('removeBrowserGroups(1234)');
+  assert.equal(x.state.tabs[2].groupId,9);
+  assert.equal(x.elements.get('toast').textContent,'此范围内没有浏览器分组');
+});
+
+test('ungroup fallback skips closed or reassigned tabs and reports partial failures', async () => {
+  const x = setup([1,2,3,4].map((id)=>tab(id,`https://a.example/${id}`,{groupId:8})));
+  modelBrowser(x); await x.init();
+  const ungroup = x.context.chrome.tabs.ungroup;
+  x.context.chrome.tabs.ungroup = async (ids) => {
+    if (Array.isArray(ids)) {
+      x.state.tabs = x.state.tabs.filter((t)=>t.id!==1);
+      x.state.tabs.find((t)=>t.id===2).groupId=99;
+      throw Error('stale batch');
+    }
+    if(ids===3) throw Error('browser refused');
+    return ungroup(ids);
+  };
+  await x.run('removeBrowserGroups(8)');
+  assert.deepEqual(x.state.tabs.map((t)=>[t.id,t.groupId]), [[2,99],[3,8],[4,-1]]);
+  assert.match(x.elements.get('toast').textContent,/有 1 个标签页未能取消分组/);
+  assert.deepEqual(x.state.removed,[]);
+});
+
+test('ungroup lock prevents overlapping organize, archive, scope changes and repeated clicks', async () => {
+  const x = setup([tab(1,'https://a.example/',{groupId:8}),tab(2,'https://a.example/',{groupId:8})],[],{preferences:{koiView:'tabs'}});
+  modelBrowser(x); await x.init();
+  const gate=deferred(), entered=deferred(); let calls=0;
+  x.context.chrome.tabs.ungroup=async()=>{calls++;entered.resolve();await gate.promise;};
+  const running=x.run('removeBrowserGroups(8)');await entered.promise;
+  assert.equal(x.elements.get('btn-ungroup-all').disabled,true);
+  await x.run('tidyAll()'); await x.run('archiveAll()'); await x.run('removeBrowserGroups()');
+  const selector=x.elements.get('group-scope');selector.value='all';
+  await selector.listeners.change({target:selector});
+  assert.equal(x.run('scope'),'window'); assert.equal(selector.value,'window');
+  assert.equal(calls,1); assert.deepEqual(x.state.removed,[]); assert.equal(x.state.writes,0);
+  gate.resolve();await running;assert.equal(x.run('operationBusy'),false);
+});
+
+test('native group list is distinct from virtual site categories and accurately disables ungroup after removal', async () => {
+  const x=setup([tab(1,'https://a.example/',{groupId:8}),tab(2,'https://a.example/2',{groupId:8})],[],{preferences:{koiView:'tabs'}});
+  modelBrowser(x);x.context.chrome.tabGroups.query=async()=>[{id:8,title:'My custom group'}];await x.init();
+  const button=x.created.find((e)=>e.className==='koi-link-btn koi-ungroup');
+  assert.equal(button.attributes['aria-label'],'取消分组：My custom group');
+  await button.listeners.click();
+  assert.equal(x.elements.get('native-group-summary').textContent,'浏览器分组（0）');
+  assert.equal(x.elements.get('btn-ungroup-all').disabled,true);
+  assert.equal(x.run('groupTabsByDomain(allTabs).length'),1);
+});
+
+
+test('ungroup keeps an immutable membership snapshot even when query results are shared objects', async () => {
+  const x=setup([tab(1,'https://example.com/',{groupId:8})]);
+  modelBrowser(x); x.context.chrome.tabs.query=async()=>x.state.tabs;
+  await x.init(); await x.run('removeBrowserGroups(8)');
+  assert.equal(x.elements.get('toast').textContent,'已取消分组，所有标签页保持打开');
 });

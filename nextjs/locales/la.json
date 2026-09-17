@@ -151,6 +151,10 @@
         "body": "KoiTab duplicata claudit, greges unius tabulae dissolvit, paginas cognatas colligit et tabulas disponit. Exspecta finem operis ante aliam ordinationem vel deletionem."
       },
       {
+        "title": "Greges dissolve, tabulis apertis",
+        "body": "In Tabulis aperi Greges navigatoris ut gregem nomine suo dissolvas, vel elige hanc fenestram aut omnes fenestras ut omnes greges dissolvas. Haec actio tantum greges solvit: tabulas non claudit, duplicata non delet, nihil condit neque tabulas consulto movet. Index inferior regulam ordinandi retinet; quaestio hanc tabulam non colat. Iterum ordina ut greges reficias."
+      },
+      {
         "title": "Tabulas perlustra",
         "body": "Per situs inspice, titulos gregum contrahe aut per titulum et inscriptionem quaere. Re electa ad tabulam transis. Signum clausurae iuxta gregem paginas illius situs claudit; caute utere."
       },
@@ -173,7 +177,7 @@
     "screenshots": {
       "note": "Data ad exemplum · Imaginem elige ut plena magnitudine videas",
       "diagnosis": "Diagnosis: subtilitas gregum et praevisio ordinationis",
-      "tabs": "Tabulae: greges secundum situs, quaestio et contractio",
+      "tabs": "Tabulae: administratio gregum navigatoris, quaestio et genera",
       "collections": "Collectio: nexus servati et notae navigatorii tantum legendae"
     }
   },
@@ -249,6 +253,10 @@
         "a": "Post diagnosin elige Late, Medie aut Subtiliter in charta ordinandi. Late paginas eiusdem situs colligit; Medie subdominia, ut Gmail et alia instrumenta Google, separat. Subtiliter etiam Google Docs, Sheets, Slides et fasciculos Excel, documenta vel PDF eiusdem hospitis separat. Late est optio initialis. Optio automatice servatur; greges mutantur cum ordinaveris. Modus subtilis vias document, spreadsheets, presentation et forms in docs.google.com agnoscit, atque suffixos .xls/.xlsx/.xlsm/.xlsb, .doc/.docx, .ppt/.pptx, .ods/.odt/.odp, .csv et .pdf in fine viae URL. Ceterae paginae per subdominia colliguntur. Numeri documentorum, quaestiones URL et fragmenta greges non creant. Singulae schedae greges non fiunt; collectiones servatae genera sua retinent."
       },
       {
+        "q": "Quomodo greges dissolvo sine tabulis claudendis?",
+        "a": "In Tabulis aperi Greges navigatoris ut gregem nomine suo dissolvas, vel elige hanc fenestram aut omnes fenestras ut omnes greges dissolvas. Haec actio tantum greges solvit: tabulas non claudit, duplicata non delet, nihil condit neque tabulas consulto movet. Index inferior regulam ordinandi retinet; quaestio hanc tabulam non colat. Iterum ordina ut greges reficias."
+      },
+      {
         "q": "Quae tabulae duplicatae habentur?",
         "a": "Tota inscriptio URL, via, quaestione et fragmento inclusis, eadem esse debet. Viae diversae manent. Status paginae, ut textus formularii nondum missus, non comparatur; opus ante ordinationem serva."
       },
@@ -279,6 +287,13 @@
     ]
   },
   "releases": [
+    {
+      "version": "5.5.0",
+      "title": "Greges dissolve, tabulis apertis",
+      "notes": [
+        "In Tabulis aperi Greges navigatoris ut gregem nomine suo dissolvas, vel elige hanc fenestram aut omnes fenestras ut omnes greges dissolvas. Haec actio tantum greges solvit: tabulas non claudit, duplicata non delet, nihil condit neque tabulas consulto movet. Index inferior regulam ordinandi retinet; quaestio hanc tabulam non colat. Iterum ordina ut greges reficias."
+      ]
+    },
     {
       "version": "5.4.0",
       "title": "Greges flexibiles, minor mora",

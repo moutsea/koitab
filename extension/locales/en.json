@@ -168,5 +168,17 @@
   "拆开 {0} 个混合分组": "Split {0} mixed groups",
   "已按所选规则拆开混合分组": "Mixed groups split using your chosen rule",
   "分组设置保存失败,请重试": "Could not save grouping preference. Try again.",
-  "更新 {0} 个分组名称": "Update {0} group names"
+  "更新 {0} 个分组名称": "Update {0} group names",
+  "浏览器分组": "Browser groups",
+  "浏览器分组（{0}）": "Browser groups ({0})",
+  "取消全部分组": "Ungroup all",
+  "取消分组": "Ungroup",
+  "取消分组：{0}": "Ungroup: {0}",
+  "未命名分组": "Unnamed group",
+  "只移除浏览器分组，保留所有标签页。下方列表仍按整理规则分类；搜索不影响此面板。": "Remove browser groups and keep all tabs open. The list below still uses your grouping rule; search does not filter this panel.",
+  "此范围内没有浏览器分组": "No browser groups in this scope",
+  "已取消分组，所有标签页保持打开": "Ungrouped. All tabs remain open.",
+  "有 {0} 个标签页未能取消分组，请重试；未关闭任何标签页": "Could not ungroup {0} tabs. Try again; no tabs were closed.",
+  "取消分组失败，请重试；未关闭任何标签页": "Could not ungroup. Try again; no tabs were closed.",
+  "范围设置失败，请重试": "Could not save scope. Try again."
 }

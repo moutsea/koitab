@@ -790,3 +790,14 @@ html:not(:lang(zh)) .koi-dx-intro h2 { letter-spacing: 0; text-indent: 0; }
 .koi-setting-hint { margin: 6px 0 0; color: var(--ink-2); font-size: 11px; line-height: 1.6; }
 #grouping-mode:focus-visible { outline: 2px solid var(--ink-2); outline-offset: 2px; }
 #grouping-mode:disabled { opacity: .5; }
+
+.koi-native-groups { margin: 10px 12px 0; padding: 8px 10px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); flex-shrink: 0; }
+.koi-native-groups summary { cursor: pointer; font-weight: 600; font-size: 12px; }
+.koi-native-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 8px; font-size: 11px; }
+#group-scope { min-width: 0; max-width: 100%; color: var(--ink); background: var(--paper-deep); border: 1px solid var(--line); border-radius: 4px; padding: 4px; font: inherit; }
+#native-group-list { max-height: 145px; overflow-y: auto; }
+.koi-native-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 7px 0; border-bottom: 1px solid var(--line); }
+.koi-native-name { flex: 1 1 70px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+.koi-native-row small { color: var(--ink-2); font-size: 10px; }
+.koi-native-row button { flex-shrink: 0; }
+.koi-native-groups summary:focus-visible, #group-scope:focus-visible { outline: 2px solid var(--ink-2); outline-offset: 2px; }
