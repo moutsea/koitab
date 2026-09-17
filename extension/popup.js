@@ -14,6 +14,13 @@ const FAV_COLLAPSE_KEY = 'koiFavCollapsed';    // 收藏夹各文件夹的折叠
 const SEC_KOI = '@section:koi';
 const SEC_BROWSER = '@section:browser';
 const AUTO_COLLAPSE_KEY = 'koiAutoCollapse';   // 折叠阈值:一组达到几个标签页就自动收起
+const GROUPING_KEY = 'koiGrouping';
+const GROUPING_MODES = ['site', 'host', 'smart'];
+let groupingMode = 'site';
+let refreshTimer = null;
+let refreshPending = false;
+let loadRevision = 0;
+
 const VIEW_KEY = 'koiView';                    // 记住上次停留的 tab
 // KoiTab 收藏存在自己的存储里,和浏览器书签完全无关 ——
 // 归档不再写 chrome.bookmarks,也就躲开了「书签树容器 id 各家不同」那整类环境病
@@ -25,6 +32,7 @@ const AUTO_COLLAPSE_DEFAULT = 8;
 const AUTO_COLLAPSE_OPTIONS = [5, 8, 12, 0];
 
 let allTabs = [];
+let nativeGroupTitles = new Map();
 let query = '';
 let scope = 'window';        // 'window' = 仅当前窗口,'all' = 所有窗口
 let windowChips = new Map(); // windowId -> 徽标文案('本' / '2' / '3' …)
@@ -52,12 +60,20 @@ let operationBusy = false;
 async function runExclusive(action) {
   if (operationBusy) return;
   operationBusy = true;
+  ++loadRevision; // Invalidate reads started before the operation.
+  clearTimeout(refreshTimer);
+  refreshTimer = null;
   try {
     render();
     return await action();
   } finally {
-    operationBusy = false;
-    render();
+    try {
+      if (refreshPending) await loadTabs();
+    } finally {
+      operationBusy = false;
+      render();
+      if (refreshPending) scheduleTabRefresh();
+    }
   }
 }
 
@@ -120,8 +136,52 @@ function normalizeDomain(url) {
   }
 }
 
+// Only live tabs use this preference. Saved archives keep their original domain keys.
+function groupingKey(url, mode = groupingMode) {
+  const domain = normalizeDomain(url);
+  if (mode === 'site') return domain;
+  try {
+    const u = new URL(url);
+    if (!['http:', 'https:', 'file:'].includes(u.protocol)) return domain;
+    const host = u.hostname.toLowerCase().replace(/\.$/, '') || domain;
+    if (mode === 'host') return host;
+    // Match known app routes, not arbitrary path segments or document IDs.
+    const path = u.pathname.toLowerCase();
+    const route = host === 'docs.google.com'
+      ? path.match(/^\/(document|spreadsheets|presentation|forms)(?:\/|$)/)?.[1]
+      : null;
+    const app = { document: 'Docs', spreadsheets: 'Sheets', presentation: 'Slides', forms: 'Forms' }[route];
+    if (app) return `${host} · ${app}`;
+    // Query parameters and hashes do not decide a file type. Decode only the basename.
+    let filename = path.slice(path.lastIndexOf('/') + 1);
+    try { filename = decodeURIComponent(filename).toLowerCase(); } catch { /* Keep malformed names intact. */ }
+    const ext = filename.match(/\.([a-z0-9]+)$/)?.[1];
+    const kind = { xls: 'Excel', xlsx: 'Excel', xlsm: 'Excel', xlsb: 'Excel',
+      ods: 'Sheets', csv: 'CSV', doc: 'Docs', docx: 'Docs', odt: 'Docs',
+      ppt: 'Slides', pptx: 'Slides', odp: 'Slides', pdf: 'PDF' }[ext];
+    return kind ? `${host} · ${kind}` : host;
+  } catch { return domain; }
+}
+
+async function loadGrouping() {
+  try {
+    const saved = (await chrome.storage.local.get(GROUPING_KEY))[GROUPING_KEY];
+    if (GROUPING_MODES.includes(saved)) groupingMode = saved;
+  } catch { /* Default to the existing site grouping behavior. */ }
+}
+
+function syncGroupingUI() {
+  document.getElementById('grouping-mode').value = groupingMode;
+  document.getElementById('grouping-hint').textContent = groupingMode === 'site'
+    ? tr('粗分：Gmail 和 Google 文档归入 google.com。')
+    : groupingMode === 'host'
+      ? tr('适中：mail.google.com 与 docs.google.com 分开。')
+      : tr('细分：再区分 Google 文档、表格、幻灯片及 .xlsx、.docx、.pdf 等后缀；其他页面按子域名分组。');
+}
+
 // Internal group keys stay stable across locale changes and existing installs.
 function displayDomain(domain) {
+  if (domain.startsWith('本地文件 · ')) return tr('本地文件') + domain.slice('本地文件'.length);
   return ['浏览器页面', '本地文件', '其他'].includes(domain) ? tr(domain) : domain;
 }
 function favoriteLabel(group) {
@@ -272,7 +332,7 @@ async function loadCollapsed() {
 function saveCollapsed() {
   try {
     // 顺手清理已经不在当前标签列表里的站点,避免记录无限增长
-    const alive = new Set(allTabs.map((t) => normalizeDomain(t.url)));
+    const alive = new Set(allTabs.map((t) => groupingKey(t.url)));
     const kept = {};
     for (const [domain, pref] of Object.entries(groupPrefs)) {
       if (alive.has(domain)) kept[domain] = pref;
@@ -359,7 +419,7 @@ function effectiveCollapsed(domain, tabCount) {
 function domainCounts(tabs = allTabs) {
   const counts = new Map();
   for (const t of tabs) {
-    const d = normalizeDomain(t.url);
+    const d = groupingKey(t.url);
     counts.set(d, (counts.get(d) || 0) + 1);
   }
   return counts;
@@ -400,18 +460,37 @@ function toggleAllGroups() {
 
 /* ---------- data ---------- */
 
+// Browser events arrive in bursts during grouping. Query once after a quiet period,
+// and let the exclusive operation refresh its own phase snapshots while it runs.
+function scheduleTabRefresh() {
+  refreshPending = true;
+  if (operationBusy) return;
+  clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(() => {
+    refreshTimer = null;
+    if (operationBusy) return;
+    loadTabs().catch((error) => console.warn('[KoiTab] refresh failed', error));
+  }, 80);
+}
+
 async function loadTabs() {
-  allTabs = scope === 'all'
-    ? await chrome.tabs.query({})
-    : await chrome.tabs.query({ currentWindow: true });
+  const revision = ++loadRevision;
+  refreshPending = false;
+  const [tabs, groups] = await Promise.all([
+    chrome.tabs.query(scope === 'all' ? {} : { currentWindow: true }),
+    chrome.tabGroups.query ? chrome.tabGroups.query({}) : [],
+  ]);
+  if (revision !== loadRevision) return;
+  allTabs = tabs;
+  nativeGroupTitles = new Map(groups.map((group) => [group.id, group.title]));
   await loadWindowInfo();
-  render();
+  if (revision === loadRevision && !operationBusy) render();
 }
 
 /** 计算窗口徽标:本窗口显示「本」,其余按顺序编号 */
 async function loadWindowInfo() {
   try {
-    currentWindowId = (await chrome.windows.getCurrent()).id;
+    if (currentWindowId == null) currentWindowId = (await chrome.windows.getCurrent()).id;
   } catch {
     currentWindowId = null;
   }
@@ -433,7 +512,7 @@ async function loadWindowInfo() {
 function groupTabsByDomain(tabs) {
   const map = new Map();
   for (const tab of tabs) {
-    const d = normalizeDomain(tab.url);
+    const d = groupingKey(tab.url);
     if (!map.has(d)) map.set(d, []);
     map.get(d).push(tab);
   }
@@ -447,7 +526,7 @@ function groupTabsByDomain(tabs) {
 
 /* ---------- render ---------- */
 
-function render() {
+function renderTabList() {
   const listEl = document.getElementById('tab-list');
   listEl.textContent = '';
 
@@ -543,13 +622,19 @@ function render() {
     listEl.appendChild(empty);
   }
 
+}
+
+function render() {
+  if (view === 'tabs') renderTabList();
+  const groupCount = domainCounts().size;
   const m = computeMetrics();
   const parts = [tr("{0} 个标签页", allTabs.length)];
   if (scope === 'all') parts.push(tr("{0} 个窗口", windowCount));
-  parts.push(tr("{0} 个站点", groups.length), tr("{0} 个重复", m.dupCount));
+  parts.push(tr("{0} 个站点", groupCount), tr("{0} 个重复", m.dupCount));
   document.getElementById('stat-text').textContent = parts.join(' · ');
 
   const tidyBtn = document.getElementById('btn-tidy');
+  tidyBtn.textContent = operationBusy ? tr('正在处理,请稍候') : tr('按诊断整理');
   tidyBtn.disabled = operationBusy || !m.tidySteps.length;
   tidyBtn.title = operationBusy ? tr("正在处理,请稍候") : tidyBtn.disabled
     ? tr("标签页已经很整齐了")
@@ -564,7 +649,8 @@ function render() {
   }
   syncArchiveUI();
   syncAutoUI();
-  renderDiagnose(m);
+  syncGroupingUI();
+  if (view === 'ops') renderDiagnose(m);
 
   // 顶部 tab 徽标:标签页数量常显;收藏数要读过书签才知道
   const badgeTabs = document.getElementById('badge-tabs');
@@ -572,12 +658,12 @@ function render() {
   const badgeFav = document.getElementById('badge-fav');
   if (badgeFav) badgeFav.textContent = favData ? String(favTotal()) : '';
 
-  renderFavorites();   // 只读缓存的书签数据,不发请求
+  if (view === 'fav') renderFavorites();   // 只读缓存的书签数据,不发请求
 
   syncToggleAllLabel();
   document.querySelectorAll(
     '#seg-scope button, #seg-days button, #seg-auto button, #koi-nav button, '
-    + '.koi-close, .koi-close-domain, .koi-fav-openall, #btn-fav-refresh, #language',
+    + '.koi-close, .koi-close-domain, .koi-fav-openall, #btn-fav-refresh, #language, #grouping-mode, #btn-diagnose, #btn-diagnose-again',
   ).forEach((button) => { button.disabled = operationBusy; });
 }
 
@@ -761,7 +847,7 @@ function planCollect(tabs, windowId) {
   const byDomain = new Map();
   for (const tab of tabs) {
     if (tab.pinned) continue;
-    const domain = normalizeDomain(tab.url);
+    const domain = groupingKey(tab.url);
     if (domain === '浏览器页面') continue;
     if (!byDomain.has(domain)) byDomain.set(domain, []);
     byDomain.get(domain).push(tab);
@@ -797,7 +883,7 @@ function planCollect(tabs, windowId) {
   const candidateIds = new Set(candidates.flatMap((c) => c.list.map((t) => t.id)));
   const loose = planGatherLoose(tabs, windowId, candidateIds);
   const pinnedKept = tabs.filter(
-    (t) => t.pinned && candidates.some((c) => c.domain === normalizeDomain(t.url)),
+    (t) => t.pinned && candidates.some((c) => c.domain === groupingKey(t.url)),
   ).length;
 
   // 预计会被搬空的窗口(当前窗口只收不搬,不会被搬空)
@@ -858,7 +944,7 @@ function bucketByWindowDomain(tabs) {
   const buckets = new Map();
   for (const tab of tabs) {
     if (tab.pinned) continue;
-    const domain = normalizeDomain(tab.url);
+    const domain = groupingKey(tab.url);
     if (domain === '浏览器页面') continue;
     const key = `${tab.windowId}::${domain}`;
     if (!buckets.has(key)) buckets.set(key, { windowId: tab.windowId, domain, tabs: [] });
@@ -892,7 +978,7 @@ function isTidyBucket(bucket, members) {
   if (!isGroupedTab(first)) return false;
   if (!bucket.tabs.every((t) => t.groupId === first.groupId)) return false;
   const inGroup = members.get(first.groupId) || [];
-  const domains = new Set(inGroup.map((t) => normalizeDomain(t.url)));
+  const domains = new Set(inGroup.map((t) => groupingKey(t.url)));
   return domains.size === 1;
 }
 
@@ -910,10 +996,52 @@ function isTidyDomain(list, members) {
   const first = list[0];
   if (!isGroupedTab(first)) return false;
   if (!list.every((t) => t.groupId === first.groupId)) return false;
-  const domain = normalizeDomain(first.url);
+  const domain = groupingKey(first.url);
   return (members.get(first.groupId) || []).every(
-    (t) => normalizeDomain(t.url) === domain,
+    (t) => groupingKey(t.url) === domain,
   );
+}
+
+function mixedGroups(tabs) {
+  return [...groupMembership(tabs).values()].filter((list) =>
+    new Set(list.map((t) => groupingKey(t.url))).size > 1);
+}
+
+// Rename only recognizable generated titles. Keep users' custom group names.
+function planGroupTitles() {
+  const updates = [];
+  for (const [id, tabs] of groupMembership(allTabs)) {
+    if (tabs.length < 2) continue;
+    const title = nativeGroupTitles.get(id);
+    const domain = groupingKey(tabs[0].url);
+    if (!title || title === domain || !tabs.every((t) => groupingKey(t.url) === domain)) continue;
+    const generated = new Set(tabs.flatMap((t) => GROUPING_MODES.map((mode) => groupingKey(t.url, mode))));
+    if (generated.has(title)) updates.push({ id, domain });
+  }
+  return updates;
+}
+
+async function splitMixedCore() {
+  const ids = mixedGroups(allTabs).flatMap((list) => list.filter((t) => !t.pinned).map((t) => t.id));
+  if (ids.length) await chrome.tabs.ungroup(ids);
+  return ids.length;
+}
+
+/** Append in the supplied order; a stale tab ID must not strand the remaining tabs. */
+async function moveTabsInOrder(ids, properties) {
+  if (!ids.length) return [];
+  try {
+    await chrome.tabs.move(ids, properties);
+    return ids;
+  } catch (error) {
+    console.warn('[KoiTab] batch move failed, retrying individually', error);
+    const moved = [];
+    for (const id of ids) {
+      try { await chrome.tabs.move(id, properties); moved.push(id); }
+      catch (error) { console.warn('[KoiTab] tab move failed', id, error); }
+    }
+    return moved;
+  }
 }
 
 /** 统计还需要成组的站点数(按 窗口+域名 计,与成组逻辑一致) */
@@ -1078,17 +1206,15 @@ async function collectCore() {
   // 1) 候选站点的标签收进当前窗口,再按站点成组
   //    (必须先集中再成组:Chrome 的分组无法跨窗口)
   for (const p of plan.plans) {
-    for (const id of p.movingIds) {
-      try {
-        await chrome.tabs.move(id, { windowId: p.targetWindowId, index: -1 });
-        result.moved++;
-      } catch (err) {
-        console.warn('[KoiTab] move tab to current window failed', id, err);
-      }
-    }
+    const moved = await moveTabsInOrder(p.movingIds, { windowId: p.targetWindowId, index: -1 });
+    result.moved += moved.length;
+    const moving = new Set(p.movingIds);
+    const arrived = new Set(moved);
+    const ids = p.tabIds.filter((id) => !moving.has(id) || arrived.has(id));
+    if (ids.length < 2) continue;
     try {
       // 此刻该站点的标签都已在当前窗口里
-      const groupId = await chrome.tabs.group({ tabIds: p.tabIds });
+      const groupId = await chrome.tabs.group({ tabIds: ids, createProperties: { windowId: p.targetWindowId } });
       await chrome.tabGroups.update(groupId, {
         title: p.domain,
         color: colorForDomain(p.domain),
@@ -1116,15 +1242,7 @@ async function collectCore() {
       console.warn('[KoiTab] create window for loose tabs failed', err);
       return result;
     }
-    for (const id of restIds) {
-      try {
-        // 逐个追加,顺序即 planGatherLoose 排好的"用户看到的顺序" 
-        await chrome.tabs.move(id, { windowId: win.id, index: -1 });
-        result.looseMoved++;
-      } catch (err) {
-        console.warn('[KoiTab] move loose tab to new window failed', id, err);
-      }
-    }
+    result.looseMoved += (await moveTabsInOrder(restIds, { windowId: win.id, index: -1 })).length;
   }
 
   return result;
@@ -1153,7 +1271,7 @@ async function mergeCore() {
     const ids = b.tabs.map((t) => t.id).filter(Boolean);
     if (ids.length < 2) continue;
     try {
-      const groupId = await chrome.tabs.group({ tabIds: ids });
+      const groupId = await chrome.tabs.group({ tabIds: ids, createProperties: { windowId: b.windowId } });
       await chrome.tabGroups.update(groupId, {
         title: b.domain,
         color: colorForDomain(b.domain),
@@ -1197,15 +1315,8 @@ async function reorderCore() {
   let moved = 0;
 
   for (const plan of plans) {
-    // 逐个追加到窗口末尾。未分组标签不在任何分组里,追加到末尾也绝不会
-    // 落进分组区间,所以不会把谁"吸"进分组、更不会拆散已有分组。
-    for (const id of plan.appendIds) {
-      try {
-        await chrome.tabs.move(id, { index: -1 });
-      } catch (err) {
-        console.warn('move failed for tab', id, err);
-      }
-    }
+    const movedIds = await moveTabsInOrder(plan.appendIds, { index: -1 });
+    if (movedIds.length !== plan.appendIds.length) throw new Error('Incomplete tab reorder');
     windows++;
     moved += plan.moved;
   }
@@ -1387,6 +1498,12 @@ async function tidyAllLocked() {
   try {
     await loadTabs();
     const dedupe = await closeDuplicatesCore();
+    await loadTabs();
+    const split = await splitMixedCore();
+    const titles = planGroupTitles();
+    for (const { id, domain } of titles) {
+      await chrome.tabGroups.update(id, { title: domain, color: colorForDomain(domain) });
+    }
 
     let collected = { moved: 0, domains: 0, looseMoved: 0, pinnedKept: 0, emptiedWindows: 0, target: 'none' };
     let merged = { grouped: 0, windows: 0 };
@@ -1418,7 +1535,11 @@ async function tidyAllLocked() {
       reordered = await reorderCore();
     }
 
-    showToast(buildTidySummary(dedupe, collected, merged, ungrouped, reordered));
+    const summary = buildTidySummary(dedupe, collected, merged, ungrouped, reordered);
+    const extras = [split ? tr('已按所选规则拆开混合分组') : '',
+      titles.length ? tr('更新 {0} 个分组名称', titles.length) : ''].filter(Boolean);
+    showToast(summary === tr('没有需要整理的标签页 🎉') && extras.length
+      ? extras.join(' · ') : [summary, ...extras].join(' · '));
   } catch (err) {
     console.error('[KoiTab] tidy failed', err);
     showToast(tr("整理时出错,请重试"));
@@ -1445,7 +1566,7 @@ function computeMetrics() {
   const looseNeeded = !!loosePlan.needed;
   const collectDomains = new Set(collectPlan.plans.map((p) => p.domain));
   const leftover = isAll
-    ? allTabs.filter((t) => !collectDomains.has(normalizeDomain(t.url)))
+    ? allTabs.filter((t) => !collectDomains.has(groupingKey(t.url)))
     : allTabs;
   const groupable = countGroupableSites(leftover);
   const loneGroups = countLoneGroups(allTabs);
@@ -1455,6 +1576,10 @@ function computeMetrics() {
   const archiveWhy = describeArchiveEmpty(archivePlan);
 
   const tidySteps = [];
+  const mixed = mixedGroups(allTabs).length;
+  const titleUpdates = planGroupTitles().length;
+  if (titleUpdates) tidySteps.push(tr('更新 {0} 个分组名称', titleUpdates));
+  if (mixed) tidySteps.push(tr("拆开 {0} 个混合分组", mixed));
   if (dupCount) tidySteps.push(tr("关闭 {0} 个重复", dupCount));
   if (collectSites) tidySteps.push(tr("把 {0} 个站点集中到当前窗口", collectSites));
   if (looseNeeded) tidySteps.push(tr("把 {0} 个散标签收进新窗口", loosePlan.tabIds.length));
@@ -1541,7 +1666,7 @@ function renderDiagnose(m) {
 
   const summary = document.getElementById('dx-summary');
   if (summary) {
-    summary.textContent = tr("{0} 个标签页 · {1} 个窗口 · {2} 个站点", allTabs.length, windowCount, new Set(allTabs.map((t) => normalizeDomain(t.url))).size);
+    summary.textContent = tr("{0} 个标签页 · {1} 个窗口 · {2} 个站点", allTabs.length, windowCount, new Set(allTabs.map((t) => groupingKey(t.url))).size);
   }
 
   const rowsEl = document.getElementById('dx-rows');
@@ -1990,7 +2115,7 @@ function favGroupEl(f, searching) {
 
 document.addEventListener('DOMContentLoaded', async () => {
   await KoiI18n.init();
-  await Promise.all([loadScope(), loadCollapsed(), loadFavPrefs(), loadArchiveDays(), loadAutoCollapse(), loadView()]);
+  await Promise.all([loadScope(), loadCollapsed(), loadFavPrefs(), loadArchiveDays(), loadAutoCollapse(), loadView(), loadGrouping()]);
   syncViewUI();
   if (view === 'fav') await loadFavorites();
   await loadTabs();
@@ -2011,6 +2136,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
       event.target.value = KoiI18n.preference;
       showToast(tr('语言设置失败,请重试'));
+    }
+  });
+
+  document.getElementById('grouping-mode').addEventListener('change', async (event) => {
+    const mode = event.target.value;
+    if (operationBusy || !GROUPING_MODES.includes(mode)) { syncGroupingUI(); return; }
+    try {
+      await runExclusive(async () => {
+        await chrome.storage.local.set({ [GROUPING_KEY]: mode });
+        groupingMode = mode;
+      });
+    } catch (error) {
+      syncGroupingUI();
+      showToast(tr('分组设置保存失败,请重试'));
     }
   });
 
@@ -2074,10 +2213,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   document.getElementById('btn-toggle-all').addEventListener('click', toggleAllGroups);
 
-  chrome.tabs.onCreated.addListener(loadTabs);
-  chrome.tabs.onRemoved.addListener(loadTabs);
+  chrome.tabs.onCreated.addListener(scheduleTabRefresh);
+  chrome.tabs.onRemoved.addListener(scheduleTabRefresh);
   chrome.tabs.onUpdated.addListener((id, info) => {
-    if (info.url || info.title) loadTabs();
+    if (info.url || info.title || 'groupId' in info || 'pinned' in info) scheduleTabRefresh();
   });
-  chrome.windows.onRemoved.addListener(loadTabs);
+  chrome.windows.onRemoved.addListener(scheduleTabRefresh);
+  for (const event of [chrome.tabs.onMoved, chrome.tabs.onAttached, chrome.tabs.onDetached]) {
+    event?.addListener(scheduleTabRefresh);
+  }
 });

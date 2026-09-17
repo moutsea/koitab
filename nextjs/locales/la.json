@@ -102,9 +102,9 @@
     "intro": "Ab una pagina ad totum navigatorium. KoiTab instrumenta ordinandi in parva interfacie, chartae simili, colligit.",
     "items": [
       {
-        "title": "Unus situs, unus grex",
-        "body": "Paginae eiusdem situs in greges nativos navigatorii colliguntur. Greges contrahi possunt et colores constantes habent. Si omnes fenestrae eliguntur, greges cognati in fenestram praesentem transferuntur.",
-        "detail": "Tabulae fixae suo loco manent nec gregibus adduntur. Communes terminationes dominiorum multiplices et privatae agnoscuntur; index tamen omnium terminationum publicarum non adhibetur."
+        "title": "Elige subtilitatem gregum",
+        "body": "Post diagnosin elige Late, Medie aut Subtiliter in charta ordinandi. Late paginas eiusdem situs colligit; Medie subdominia, ut Gmail et alia instrumenta Google, separat. Subtiliter etiam Google Docs, Sheets, Slides et fasciculos Excel, documenta vel PDF eiusdem hospitis separat. Late est optio initialis. Optio automatice servatur; greges mutantur cum ordinaveris.",
+        "detail": "Modus subtilis vias document, spreadsheets, presentation et forms in docs.google.com agnoscit, atque suffixos .xls/.xlsx/.xlsm/.xlsb, .doc/.docx, .ppt/.pptx, .ods/.odt/.odp, .csv et .pdf in fine viae URL. Ceterae paginae per subdominia colliguntur. Numeri documentorum, quaestiones URL et fragmenta greges non creant. Singulae schedae greges non fiunt; collectiones servatae genera sua retinent."
       },
       {
         "title": "Inscriptiones omnino eaedem",
@@ -143,6 +143,10 @@
         "body": "Elige fenestram praesentem aut omnes fenestras. Inspice duplicata, paginas dispersas et tabulas otiosas. Praevisionem ordinationis vel conservationis lege antequam agas."
       },
       {
+        "title": "Elige subtilitatem gregum",
+        "body": "Post diagnosin elige Late, Medie aut Subtiliter in charta ordinandi. Late paginas eiusdem situs colligit; Medie subdominia, ut Gmail et alia instrumenta Google, separat. Subtiliter etiam Google Docs, Sheets, Slides et fasciculos Excel, documenta vel PDF eiusdem hospitis separat. Late est optio initialis. Optio automatice servatur; greges mutantur cum ordinaveris."
+      },
+      {
         "title": "Uno actu ordina",
         "body": "KoiTab duplicata claudit, greges unius tabulae dissolvit, paginas cognatas colligit et tabulas disponit. Exspecta finem operis ante aliam ordinationem vel deletionem."
       },
@@ -168,7 +172,7 @@
     ],
     "screenshots": {
       "note": "Data ad exemplum · Imaginem elige ut plena magnitudine videas",
-      "diagnosis": "Diagnosis: duplicata, tabulae otiosae et praevisio ordinationis",
+      "diagnosis": "Diagnosis: subtilitas gregum et praevisio ordinationis",
       "tabs": "Tabulae: greges secundum situs, quaestio et contractio",
       "collections": "Collectio: nexus servati et notae navigatorii tantum legendae"
     }
@@ -241,6 +245,10 @@
         "a": "Situs et extensio linguas Sinicam, Anglicam, Iaponicam, Coreanam et Latinam sustinent. Extensio initio linguam navigatoris sequitur; linguam in angulo superiore dextro eligere et servare potes."
       },
       {
+        "q": "Quomodo Gmail, Google Docs et Sheets separo?",
+        "a": "Post diagnosin elige Late, Medie aut Subtiliter in charta ordinandi. Late paginas eiusdem situs colligit; Medie subdominia, ut Gmail et alia instrumenta Google, separat. Subtiliter etiam Google Docs, Sheets, Slides et fasciculos Excel, documenta vel PDF eiusdem hospitis separat. Late est optio initialis. Optio automatice servatur; greges mutantur cum ordinaveris. Modus subtilis vias document, spreadsheets, presentation et forms in docs.google.com agnoscit, atque suffixos .xls/.xlsx/.xlsm/.xlsb, .doc/.docx, .ppt/.pptx, .ods/.odt/.odp, .csv et .pdf in fine viae URL. Ceterae paginae per subdominia colliguntur. Numeri documentorum, quaestiones URL et fragmenta greges non creant. Singulae schedae greges non fiunt; collectiones servatae genera sua retinent."
+      },
+      {
         "q": "Quae tabulae duplicatae habentur?",
         "a": "Tota inscriptio URL, via, quaestione et fragmento inclusis, eadem esse debet. Viae diversae manent. Status paginae, ut textus formularii nondum missus, non comparatur; opus ante ordinationem serva."
       },
@@ -271,6 +279,14 @@
     ]
   },
   "releases": [
+    {
+      "version": "5.4.0",
+      "title": "Greges flexibiles, minor mora",
+      "notes": [
+        "Post diagnosin elige Late, Medie aut Subtiliter in charta ordinandi. Late paginas eiusdem situs colligit; Medie subdominia, ut Gmail et alia instrumenta Google, separat. Subtiliter etiam Google Docs, Sheets, Slides et fasciculos Excel, documenta vel PDF eiusdem hospitis separat. Late est optio initialis. Optio automatice servatur; greges mutantur cum ordinaveris.",
+        "Schedae simul moventur, eventus navigatoris colliguntur, et tabulae occultae vel status intermedii rarius pinguntur."
+      ]
+    },
     {
       "version": "5.3.5",
       "title": "Ex GitHub Release deprome",

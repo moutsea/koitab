@@ -156,5 +156,17 @@
   "语言设置失败,请重试": "Could not change language. Please retry",
   "语言设置": "Language",
   "删除「{0}」当前显示的 {1} 条 KoiTab 收藏?\n\n只删除这些条目,保留未命中的收藏,不动浏览器书签和任何标签页。": "Delete {1} visible KoiTab entries in “{0}”?\n\nOnly these entries will be deleted. Hidden entries, browser bookmarks and open tabs will remain unchanged.",
-  "{0}\n{1}\n{2} · 点击在新标签页打开": "{0}\n{1}\n{2} · Open in a new tab"
+  "{0}\n{1}\n{2} · 点击在新标签页打开": "{0}\n{1}\n{2} · Open in a new tab",
+  "分组精细度": "Grouping detail",
+  "粗 · 按主站点": "Coarse · Site",
+  "中 · 按子域名": "Medium · Subdomain",
+  "细 · 按应用与文件": "Fine · App & file type",
+  "粗分：Gmail 和 Google 文档归入 google.com。": "Coarse: Gmail and Google Docs share google.com.",
+  "适中：mail.google.com 与 docs.google.com 分开。": "Medium: mail.google.com and docs.google.com stay separate.",
+  "细分：再区分 Google 文档、表格、幻灯片及 .xlsx、.docx、.pdf 等后缀；其他页面按子域名分组。": "Fine: also separate Google Docs, Sheets, Slides and file types such as .xlsx, .docx and .pdf. Other pages use subdomains.",
+  "设置自动保存；点击整理后调整浏览器分组，单个标签不成组。": "Saved automatically. Browser groups change when you organize; single tabs stay ungrouped.",
+  "拆开 {0} 个混合分组": "Split {0} mixed groups",
+  "已按所选规则拆开混合分组": "Mixed groups split using your chosen rule",
+  "分组设置保存失败,请重试": "Could not save grouping preference. Try again.",
+  "更新 {0} 个分组名称": "Update {0} group names"
 }

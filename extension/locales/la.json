@@ -156,5 +156,17 @@
   "语言设置失败,请重试": "Lingua mutari non potuit. Iterum tenta",
   "语言设置": "Lingua",
   "删除「{0}」当前显示的 {1} 条 KoiTab 收藏?\n\n只删除这些条目,保留未命中的收藏,不动浏览器书签和任何标签页。": "Deleantur {1} res KoiTab visibiles in «{0}»?\n\nHae tantum res delebuntur. Res occultae, notae navigatorii et tabulae apertae manebunt.",
-  "{0}\n{1}\n{2} · 点击在新标签页打开": "{0}\n{1}\n{2} · In nova tabula aperi"
+  "{0}\n{1}\n{2} · 点击在新标签页打开": "{0}\n{1}\n{2} · In nova tabula aperi",
+  "分组精细度": "Subtilitas gregum",
+  "粗 · 按主站点": "Late · Situs",
+  "中 · 按子域名": "Medie · Subdominium",
+  "细 · 按应用与文件": "Subtiliter · App et genus",
+  "粗分：Gmail 和 Google 文档归入 google.com。": "Late: Gmail et Google Docs in google.com colliguntur.",
+  "适中：mail.google.com 与 docs.google.com 分开。": "Medie: mail.google.com et docs.google.com separantur.",
+  "细分：再区分 Google 文档、表格、幻灯片及 .xlsx、.docx、.pdf 等后缀；其他页面按子域名分组。": "Subtiliter: Google Docs, Sheets, Slides et genera ut .xlsx, .docx, .pdf quoque separantur. Ceterae paginae per subdominia colliguntur.",
+  "设置自动保存；点击整理后调整浏览器分组，单个标签不成组。": "Optio automatice servatur. Greges mutantur cum ordinaveris; singulae schedae greges non fiunt.",
+  "拆开 {0} 个混合分组": "Separa {0} greges mixtos",
+  "已按所选规则拆开混合分组": "Greges mixti secundum regulam electam separati sunt",
+  "分组设置保存失败,请重试": "Optio gregum servari non potuit. Iterum conare.",
+  "更新 {0} 个分组名称": "Renova {0} nomina gregum"
 }

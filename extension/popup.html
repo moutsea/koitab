@@ -65,6 +65,16 @@
             </div>
           </div>
           <div class="koi-field">
+            <label class="koi-field-label" for="grouping-mode" data-i18n="分组精细度">分组精细度</label>
+            <select id="grouping-mode" aria-describedby="grouping-hint grouping-note">
+              <option value="site" data-i18n="粗 · 按主站点">粗 · 按主站点</option>
+              <option value="host" data-i18n="中 · 按子域名">中 · 按子域名</option>
+              <option value="smart" data-i18n="细 · 按应用与文件">细 · 按应用与文件</option>
+            </select>
+          </div>
+          <p class="koi-setting-hint" id="grouping-hint"></p>
+          <p class="koi-setting-hint" id="grouping-note" data-i18n="设置自动保存；点击整理后调整浏览器分组，单个标签不成组。">设置自动保存；点击整理后调整浏览器分组，单个标签不成组。</p>
+          <div class="koi-field">
             <span class="koi-field-label" data-i18n="超过几个自动收起">超过几个自动收起</span>
             <div class="koi-seg" id="seg-auto">
               <button class="koi-seg-btn" data-auto="5">5</button>

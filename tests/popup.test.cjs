@@ -47,17 +47,20 @@ function setup(tabs = [], saved = [], options = {}) {
     getElementById(id) { if (!elements.has(id)) elements.set(id, element()); return elements.get(id); },
     querySelector() { return element(); },
     querySelectorAll(selector) {
-      if (selector.includes('#seg-scope button')) return [...settings, document.getElementById('language'), ...created.filter((e) => /koi-close|koi-fav-openall/.test(e.className || ''))];
+      if (selector.includes('#seg-scope button')) return [...settings, document.getElementById('language'), document.getElementById('grouping-mode'), ...created.filter((e) => /koi-close|koi-fav-openall/.test(e.className || ''))];
       return [];
     },
   };
-  const event = { addListener() {} };
+  const timers = new Map();
+  let timerId = 0;
+  const events = {};
+  const event = (name) => ({ addListener(cb) { events[name] = cb; } });
   class Clock extends Date { static now() { return NOW; } }
   const context = vm.createContext({
     URL, Date: Clock, navigator: { language: options.browserLanguage || 'zh-CN' },
     fetch: async (url) => ({ ok: true, json: async () => JSON.parse(fs.readFileSync(path.join(__dirname, '../extension', url), 'utf8')) }),
     console: { warn() {}, error() {} },
-    setTimeout() {}, clearTimeout() {}, document,
+    setTimeout(cb) { timers.set(++timerId, cb); return timerId; }, clearTimeout(id) { timers.delete(id); }, document,
     window: { confirm(msg) { state.confirms.push(msg); return state.confirmResult; } },
     chrome: {
       i18n: { getUILanguage: () => options.browserLanguage || 'zh-CN' },
@@ -67,10 +70,11 @@ function setup(tabs = [], saved = [], options = {}) {
         get: async (id) => { const t = state.tabs.find((t) => t.id === id); if (!t) throw Error('No tab'); return copy(t); },
         remove: async (ids) => { const list = [].concat(ids); state.removed.push(...list); state.tabs = state.tabs.filter((t) => !list.includes(t.id)); },
         ungroup: async () => {}, group: async () => 7, move: async () => {},
-        onCreated: event, onRemoved: event, onUpdated: event,
+        onCreated: event('created'), onRemoved: event('removed'), onUpdated: event('updated'),
+        onMoved: event('moved'), onAttached: event('attached'), onDetached: event('detached'),
       },
       tabGroups: { update: async () => {} },
-      windows: { getCurrent: async () => ({ id: 1 }), onRemoved: event },
+      windows: { getCurrent: async () => ({ id: 1 }), onRemoved: event('windowRemoved') },
       storage: { local: {
         get: async () => ({ ...copy(state.preferences), koiArchived: copy(state.saved) }),
         set: async (obj) => { if ('koiArchived' in obj) { state.writes++; state.saved = copy(obj.koiArchived); } else { Object.assign(state.preferences, copy(obj)); } },
@@ -82,7 +86,7 @@ function setup(tabs = [], saved = [], options = {}) {
   vm.runInContext(source, context);
   const run = (script) => vm.runInContext(script, context);
   run('allTabs = fixture; currentWindowId = 1');
-  return { state, context, run, elements, settings, init: () => init() };
+  return { state, context, run, elements, settings, events, timers, created, init: () => init() };
 }
 
 test('dedupe preserves hash routes, path slashes and query slashes; exact copies still close', async () => {
@@ -326,4 +330,214 @@ test('language selector cannot run during a destructive operation', async () => 
   gate.resolve();
   await running;
   assert.equal(x.elements.get('language').disabled, false);
+});
+
+test('grouping presets distinguish hosts, Google app routes and file suffixes without splitting document IDs', () => {
+  const x = setup();
+  const key = (url, mode) => x.run(`groupingKey(${JSON.stringify(url)}, '${mode}')`);
+  assert.equal(key('https://mail.google.com/mail/u/0', 'site'), 'google.com');
+  assert.equal(key('https://docs.google.com/document/d/a', 'site'), 'google.com');
+  assert.equal(key('https://mail.google.com/mail/u/0', 'host'), 'mail.google.com');
+  assert.equal(key('https://docs.google.com/spreadsheets/d/a', 'host'), 'docs.google.com');
+  for (const [route, title] of [['document','Docs'], ['spreadsheets','Sheets'], ['presentation','Slides'], ['forms','Forms']]) {
+    assert.equal(key(`https://docs.google.com/${route}/d/a?x=1#edit`, 'smart'), `docs.google.com · ${title}`);
+    assert.equal(key(`https://docs.google.com/${route}/u/2/d/b`, 'smart'), `docs.google.com · ${title}`);
+  }
+  for (const [suffix, label] of [['XLSX','Excel'],['xls','Excel'],['docx','Docs'],['pdf','PDF'],['pptx','Slides'],['csv','CSV']]) {
+    assert.equal(key(`https://files.example.com/a.${suffix}?download=1#page=3`, 'smart'), `files.example.com · ${label}`);
+  }
+  assert.equal(key('https://files.example.com/a%2Exlsx', 'smart'), 'files.example.com · Excel');
+  assert.equal(key('https://files.example.com/view?file=a.xlsx#b.docx', 'smart'), 'files.example.com');
+  assert.equal(key('https://docs.google.com/documentation/a', 'smart'), 'docs.google.com');
+  assert.equal(key('https://app.example/a/123', 'smart'), key('https://app.example/b/456', 'smart'));
+  assert.equal(key('chrome://extensions/', 'smart'), '浏览器页面');
+  assert.equal(key('file:///tmp/test.xlsx', 'smart'), '本地文件 · Excel');
+  assert.equal(key('https://a.example.co.uk/a', 'site'), 'example.co.uk');
+  assert.notEqual(key('https://a.github.io/', 'site'), key('https://b.github.io/', 'site'));
+});
+
+test('grouping preference persists without mutating tabs or archives and rolls back a failed save', async () => {
+  const x = setup([tab(1, 'https://mail.google.com/')], [favorite('old', 'https://docs.google.com/')]);
+  await x.init();
+  const selector = x.elements.get('grouping-mode');
+  assert.equal(selector.value, 'site');
+  selector.value = 'smart';
+  await selector.listeners.change({target: selector});
+  assert.equal(x.run('groupingMode'), 'smart');
+  assert.equal(x.state.preferences.koiGrouping, 'smart');
+  assert.equal(x.state.writes, 0);
+  assert.deepEqual(x.state.removed, []);
+  assert.equal(x.state.saved[0].domain, 'docs.google.com');
+  const reopened = setup([], [], {preferences: x.state.preferences});
+  await reopened.init();
+  assert.equal(reopened.run('groupingMode'), 'smart');
+  x.context.chrome.storage.local.set = async () => { throw Error('disk'); };
+  selector.value = 'host';
+  await selector.listeners.change({target:selector});
+  assert.equal(x.run('groupingMode'), 'smart');
+  assert.equal(selector.value, 'smart');
+  assert.equal(x.elements.get('toast').textContent, '分组设置保存失败,请重试');
+  const invalid = setup([], [], {preferences:{koiGrouping:'unknown'}});
+  await invalid.init();
+  assert.equal(invalid.run('groupingMode'), 'site');
+});
+
+test('grouping preference is locked throughout a running operation', async () => {
+  const x = setup(); await x.init();
+  const gate = deferred(); x.context.modeGate = gate.promise;
+  const running = x.run('runExclusive(() => modeGate)');
+  const selector = x.elements.get('grouping-mode');
+  assert.equal(selector.disabled, true);
+  selector.value = 'smart';
+  await selector.listeners.change({target:selector});
+  assert.equal(x.run('groupingMode'), 'site');
+  assert.equal(selector.value, 'site');
+  gate.resolve(); await running;
+  assert.equal(selector.disabled, false);
+});
+
+// Model native grouping and ordered moves so assertions check final browser state,
+// not only the grouping plan. No real browser tabs are touched.
+function modelBrowser(x) {
+  let groupId = 100;
+  const calls = {move: [], group: [], query: 0, windows: [], titles: new Map()};
+  const api = x.context.chrome.tabs;
+  const query = api.query;
+  api.query = async (q) => { calls.query++; return query(q); };
+  api.ungroup = async (ids) => {
+    for (const id of [].concat(ids)) x.state.tabs.find((t) => t.id === id).groupId = -1;
+    x.events.updated?.(ids[0], {groupId:-1});
+  };
+  api.group = async ({tabIds, createProperties}) => {
+    const members = tabIds.map((id) => x.state.tabs.find((t) => t.id === id));
+    assert.ok(members.every((t) => t && !t.pinned && t.windowId === createProperties.windowId));
+    const id = groupId++;
+    for (const t of members) t.groupId = id;
+    calls.group.push(copy(tabIds));
+    x.events.updated?.(tabIds[0], {groupId:id});
+    return id;
+  };
+  x.context.chrome.tabGroups.update = async (id, update) => { calls.titles.set(id, update.title); };
+  api.move = async (ids, props) => {
+    calls.move.push(copy([].concat(ids)));
+    for (const id of [].concat(ids)) {
+      const t = x.state.tabs.find((t) => t.id === id);
+      assert.ok(t && !t.pinned);
+      if (props.windowId != null) { t.windowId = props.windowId; t.groupId = -1; }
+      t.index = 1 + Math.max(-1, ...x.state.tabs.filter((row) => row.windowId === t.windowId).map((row) => row.index));
+      x.events.moved?.(id, {});
+    }
+  };
+  x.context.chrome.windows.create = async ({tabId, focused}) => {
+    assert.equal(focused, false);
+    const t = x.state.tabs.find((t) => t.id === tabId);
+    const id = 50 + calls.windows.length;
+    t.windowId = id; t.index = 0; t.groupId = -1;
+    calls.windows.push(id);
+    return {id};
+  };
+  return calls;
+}
+
+for (const scope of ['window', 'all']) {
+  test(`${scope}: changing granularity splits existing mixed groups, preserves pinned tabs and is repeatable`, async () => {
+    const x = setup([
+      tab(1, 'https://docs.google.com/document/d/a', {groupId:9}),
+      tab(2, 'https://docs.google.com/document/d/b', {groupId:9}),
+      tab(3, 'https://docs.google.com/spreadsheets/d/a', {groupId:9}),
+      tab(4, 'https://docs.google.com/presentation/d/a', {groupId:9}),
+      tab(5, 'https://mail.google.com/', {pinned:true}),
+    ], [], {preferences:{koiGrouping:'smart', koiScope:scope}});
+    const calls = modelBrowser(x); await x.init();
+    assert.ok(x.run('computeMetrics().tidySteps.length') > 0);
+    await x.run('tidyAll()');
+    assert.equal(x.state.tabs.length, 5);
+    assert.equal(x.state.tabs[0].groupId, x.state.tabs[1].groupId);
+    assert.equal(calls.titles.get(x.state.tabs[0].groupId), 'docs.google.com · Docs');
+    assert.equal(x.state.tabs[2].groupId, -1);
+    assert.equal(x.state.tabs[3].groupId, -1);
+    assert.equal(x.state.tabs[4].windowId, 1);
+    assert.equal(x.state.tabs[4].pinned, true);
+    const before = [calls.move.length, calls.group.length, calls.windows.length];
+    await x.run('tidyAll()');
+    assert.deepEqual([calls.move.length, calls.group.length, calls.windows.length], before);
+  });
+}
+
+test('mixed singletons still enable organize and become independent ungrouped tabs', async () => {
+  const x = setup([tab(1,'https://mail.google.com/',{groupId:9}),tab(2,'https://docs.google.com/',{groupId:9})]);
+  modelBrowser(x); x.run("groupingMode = 'host'");
+  assert.ok(x.run('computeMetrics().tidySteps.length') > 0);
+  await x.run('tidyAll()');
+  assert.ok(x.state.tabs.every((t) => t.groupId === -1));
+});
+
+test('400 cross-window tabs use one batch move and bounded queries/renders despite 400 move events', async () => {
+  const x = setup(Array.from({length:401}, (_,i) => tab(i+1, `https://example.com/${i}`, {windowId:i ? 2 : 1})), [], {preferences:{koiScope:'all'}});
+  const calls = modelBrowser(x); await x.init();
+  x.run('let rendered = 0; const originalRender = render; render = () => { rendered++; originalRender(); };');
+  const beforeQueries = calls.query;
+  await x.run('tidyAll()');
+  assert.equal(calls.move.length, 1);
+  assert.equal(calls.move[0].length, 400);
+  assert.ok(x.state.tabs.every((t) => t.windowId === 1));
+  assert.ok(calls.query - beforeQueries <= 8);
+  assert.equal(x.run('rendered'), 2);
+  assert.equal(x.created.filter((e) => e.className === 'koi-row').length, 0, 'hidden tab list must not build 401 rows');
+});
+
+test('batch reorder preserves loose-tab order and never moves pinned or grouped tabs', async () => {
+  const x = setup([tab(9,'https://a.example/',{index:0}),tab(8,'https://b.example/',{index:1,pinned:true}),
+    tab(7,'https://c.example/',{index:2,groupId:10}),tab(6,'https://c.example/b',{index:3,groupId:10}),
+    tab(3,'https://d.example/',{index:4})]);
+  const calls = modelBrowser(x);
+  await x.run('reorderCore()');
+  assert.deepEqual(calls.move, [[9,3]]);
+  assert.ok(x.state.tabs.find((t)=>t.id===9).index < x.state.tabs.find((t)=>t.id===3).index);
+});
+
+test('a partially failed batch retries in order and leaves unavailable tabs out of the target group', async () => {
+  const x = setup([tab(1,'https://a.example/1'),tab(2,'https://a.example/2',{windowId:2}),tab(3,'https://a.example/3',{windowId:2})]);
+  x.run("scope='all'");
+  const calls = modelBrowser(x);
+  const move = x.context.chrome.tabs.move;
+  x.context.chrome.tabs.move = async (ids, props) => {
+    if (Array.isArray(ids)) { await move(ids[0], props); throw Error('batch interrupted'); }
+    if (ids === 3) throw Error('cannot move');
+    return move(ids, props);
+  };
+  await x.run('collectCore()');
+  assert.deepEqual(calls.group, [[1,2]]);
+  assert.equal(x.state.tabs[2].windowId, 2);
+});
+
+test('a burst of external events produces one refresh and an older read cannot overwrite a newer snapshot', async () => {
+  const x = setup(); await x.init();
+  let queries = 0;
+  x.context.chrome.tabs.query = async () => { queries++; return []; };
+  for (let i=0; i<500; i++) x.events.moved(i, {});
+  assert.equal(x.timers.size, 1);
+  const callback = [...x.timers.values()][0]; x.timers.clear(); callback();
+  await new Promise(setImmediate);
+  assert.equal(queries, 1);
+  const old = deferred(); const recent = deferred(); let count = 0;
+  x.context.chrome.tabs.query = () => ++count === 1 ? old.promise : recent.promise;
+  const first = x.run('loadTabs()'); const second = x.run('loadTabs()');
+  recent.resolve([tab(2,'https://new.example/')]); await second;
+  old.resolve([tab(1,'https://old.example/')]); await first;
+  assert.equal(x.run('allTabs[0].id'), 2);
+});
+
+test('a pure group gets its generated title updated on mode change, while custom titles remain intact', async () => {
+  for (const title of ['google.com', 'My research']) {
+    const x = setup([tab(1,'https://docs.google.com/document/d/a',{groupId:9}),tab(2,'https://docs.google.com/document/d/b',{groupId:9})],[],{preferences:{koiGrouping:'smart'}});
+    const calls = modelBrowser(x); calls.titles.set(9, title);
+    x.context.chrome.tabGroups.query = async () => [...calls.titles].map(([id,title]) => ({id,title}));
+    await x.init();
+    assert.equal(x.run('computeMetrics().tidySteps.length > 0'), title === 'google.com');
+    await x.run('tidyAll()');
+    assert.equal(calls.group.length, 0, 'title-only changes must not move or regroup tabs');
+    assert.equal(calls.titles.get(9), title === 'google.com' ? 'docs.google.com · Docs' : title);
+    assert.equal(x.run('computeMetrics().tidySteps.length'), 0);
+  }
 });

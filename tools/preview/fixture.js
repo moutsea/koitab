@@ -128,6 +128,7 @@
       onRemoved: events,
       onUpdated: events,
     },
+    tabGroups: { query: async () => [] },
     windows: { getCurrent: async () => ({ id: 1 }), onRemoved: events },
     bookmarks: {
       getTree: async () => [
